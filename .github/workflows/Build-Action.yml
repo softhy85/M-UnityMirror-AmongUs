@@ -65,7 +65,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-#    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main'
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -110,7 +110,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-#    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main'
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
