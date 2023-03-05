@@ -106,7 +106,10 @@ jobs:
   deployPages:
     needs: buildWindows
     name: Deploy to Github Pages 🚀
+    concurrency: ci-${{ github.ref }}
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     if: github.ref == 'refs/heads/main'
     steps:
       - name: Checkout code
