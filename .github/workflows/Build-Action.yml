@@ -112,10 +112,6 @@ jobs:
       contents: write
 #    if: github.ref == 'refs/heads/main'
     steps:
-      - name: Create Folder
-        run: |
-          mkdir /home/runner/work/M-UnityMirror-AmongUs/M-UnityMirror-AmongUs/build/Windows
-
       - name: Checkout code
         uses: actions/checkout@v2
 
