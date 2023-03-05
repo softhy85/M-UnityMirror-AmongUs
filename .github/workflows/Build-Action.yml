@@ -120,6 +120,10 @@ jobs:
           name: build-StandaloneWindows64
           path: build
 
+      - name: Create Folder
+        run: |
+          mkdir /home/runner/work/M-UnityMirror-AmongUs/M-UnityMirror-AmongUs/build/Windows
+
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@4.1.4
         with:
