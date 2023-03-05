@@ -15,6 +15,10 @@ jobs:
         testMode:
           - EditMode
           - PlayMode
+    permissions:
+      id-token: write
+      contents: read
+      checks: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -45,10 +49,6 @@ jobs:
       - name: Run tests
         uses: game-ci/unity-test-runner@v2
         id: testRunner
-        permissions:
-          id-token: write
-          contents: read
-          checks: write
         with:
           testMode: ${{ matrix.testMode }}
           checkName: ${{ matrix.testMode }} test results
