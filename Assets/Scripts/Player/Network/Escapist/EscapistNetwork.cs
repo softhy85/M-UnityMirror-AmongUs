@@ -8,6 +8,7 @@ namespace Player.Network.Escapist
     {
         void Update()
         {
+            if (!isLocalPlayer) { return; }
             PlayerMovement();
         }
     }
