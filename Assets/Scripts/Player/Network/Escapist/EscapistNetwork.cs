@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using UnityEngine;
 using Player.Controller.Escapist;
 
@@ -6,10 +7,9 @@ namespace Player.Network.Escapist
 {
     public class EscapistNetwork : APlayerNetwork
     {
-        void Update()
+        protected  override void Update()
         {
-            if (!isLocalPlayer) { return; }
-            PlayerMovement();
+            base.Update();
         }
     }
 }

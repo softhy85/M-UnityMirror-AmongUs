@@ -6,10 +6,9 @@ namespace Player.Network.Escapist
 {
     public class MonsterNetwork : APlayerNetwork
     {
-        void Update()
+        protected  override void Update()
         {
-            if (!isLocalPlayer) { return; }
-            PlayerMovement();
+            base.Update();
         }
     }
 }

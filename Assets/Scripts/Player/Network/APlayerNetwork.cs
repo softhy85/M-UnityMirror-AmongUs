@@ -43,6 +43,31 @@ namespace Player.Network
         { get { return _mainCamera; } set { _mainCamera = value; } }
         #endregion
 
+        #region Server
+        [Command]
+        protected void CmdMove(Vector3 movementVector)
+        {
+            var targetVector = new Vector3(movementVector.x, 0,
+                movementVector.y);
+            var eulerMovementVector = Quaternion.Euler(0, _camera.gameObject.transform.eulerAngles.y, 0) * targetVector;
+            var speed = _moveSpeed * Time.deltaTime;
+            var targetPosition = _body.transform.position + movementVector * speed;
+
+            RpcMove(eulerMovementVector);
+        }
+        #endregion
+
+        #region Client Rpc
+        [ClientRpc]
+        protected void RpcMove(Vector3 movementVector)
+        {
+            MoveTowardTarget(movementVector);
+            RotateTowardMovementVector(movementVector);
+        }
+        #endregion
+
+        #region Client
+        [Client]
         protected virtual void Start()
         {
             if (!isLocalPlayer)
@@ -57,38 +82,41 @@ namespace Player.Network
             }
         }
 
-        protected void PlayerMovement()
+        [ClientCallback]
+        protected virtual void Update()
         {
-            var targetVector = new Vector3(_controller._inputVector.x, 0,
-                _controller._inputVector.y);
-            var movementVector = Quaternion.Euler(0, _camera.gameObject.transform.eulerAngles.y, 0) * targetVector;
-    
-            MoveTowardTarget(movementVector);
-
-            RotateTowardMovementVecor(movementVector);
-        }
-
-        private void MoveTowardTarget(Vector3 movementVector)
-        {
-            var speed = _moveSpeed * Time.deltaTime;
-            var targetPosition = _body.transform.position + movementVector * speed;
-            _body.transform.position = targetPosition;
+            if (!isOwned) return;
             _camera.transform.position = _body.transform.position + _cameraRelative;
+            if (_controller._inputVector.magnitude != 0)
+            {
+                CmdMove(_controller._inputVector);
+            }
         }
 
-        private void RotateTowardMovementVecor(Vector3 movementVector)
-        {
-            if (movementVector.magnitude == 0) { return; }
-            var rotation = Quaternion.LookRotation(movementVector);
-            _body.transform.rotation = Quaternion.RotateTowards(_body.transform.rotation,
-                rotation, _rotateSpeed);
-        }
-
+        [Client]
         void OnDestroy()
         {
             _camera.gameObject.SetActive(false);
             if (_mainCamera != null)
                 _mainCamera.gameObject.SetActive(true);
         }
+
+        [Client]
+        private void MoveTowardTarget(Vector3 movementVector)
+        {
+            var speed = _moveSpeed * Time.deltaTime;
+            var targetPosition = _body.transform.position + movementVector * speed;
+            _body.transform.position = targetPosition;
+        }
+
+        [Client]
+        private void RotateTowardMovementVector(Vector3 movementVector)
+        {
+            if (movementVector.magnitude == 0) { return; }
+            var rotation = Quaternion.LookRotation(movementVector);
+            _body.transform.rotation = Quaternion.RotateTowards(_body.transform.rotation,
+                rotation, _rotateSpeed);
+        }
+        #endregion
     }
 }
