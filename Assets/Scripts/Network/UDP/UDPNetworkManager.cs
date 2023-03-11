@@ -5,8 +5,9 @@ namespace UDP
 {
     public class UDPNetworkManager : ANetworkManager
     {
-        protected override void OnServerAddPlayer(NetworkConnectionToClient conn)
+        public override void OnServerAddPlayer(NetworkConnectionToClient conn)
         {
+            base.OnServerAddPlayer(conn);
         }
     }
     

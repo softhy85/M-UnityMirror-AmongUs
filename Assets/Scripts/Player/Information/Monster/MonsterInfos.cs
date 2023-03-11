@@ -5,11 +5,10 @@ namespace Player.Information.Monster
 {
     public class MonsterInfos : APlayerInfos
     {
-        #region imple role
-
-        [field: SerializeField] public PlayerRole _role = PlayerRole.Monster;
-        public PlayerRole Role
-        { get { return _role; } set { _role = value; } }
-        #endregion
+        protected override void Awake()
+        {
+            base.Awake();
+            _role = PlayerRole.Monster;
+        }
     }
 }

@@ -1,15 +1,20 @@
-using Mirror;
+﻿using System;
 using UnityEngine;
 using Player.Controller;
-using Unity.VisualScripting;
+using Player.Network;
 
-namespace Player.Network
+namespace Player.Behaviour
 {
-    public abstract class APlayerNetwork : NetworkBehaviour, IPlayerNetwork
+    public class APlayerBehaviour : MonoBehaviour, IPlayerBehaviour
     {
+        #region imple player network
+         protected PlayerNetwork _playerNetwork;
+         public PlayerNetwork PlayerNetwork
+        { get => _playerNetwork; set => _playerNetwork = value; }
+        #endregion
         #region imple body
-
         [field: SerializeField] protected GameObject _body;
+
         public GameObject Body
         { get => _body; set => _body = value; }
         #endregion
@@ -50,80 +55,59 @@ namespace Player.Network
         { get => _mainCamera; set => _mainCamera = value; }
         #endregion
 
-        #region Server
-        [Command]
-        protected void CmdMove(Vector3 movementVector)
+        protected void Awake()
         {
+            _playerNetwork = this.gameObject.transform.parent
+                .GetComponent<PlayerNetwork>();
+            _mainCamera = Camera.main;
+            if (_camera != null)
+                _camera.gameObject.SetActive(false);
+            _cameraRelative = _camera.transform.position;
+        }
+
+        protected virtual void Update()
+        {
+            if (_controller._inputVector.magnitude != 0)
+            {
+                AskToMove(_controller._inputVector);
+            }
+        }
+        private void AskToMove(Vector3 movementVector) {
             var targetVector = new Vector3(movementVector.x, 0,
                 movementVector.y);
             var eulerMovementVector = Quaternion.Euler(0, _camera.gameObject.transform.eulerAngles.y, 0) * targetVector;
             var speed = _moveSpeed * Time.deltaTime;
             var targetPosition = _body.transform.position + movementVector * speed;
-
-            RpcMove(eulerMovementVector);
+            _playerNetwork.CmdMove(eulerMovementVector);
         }
-        #endregion
 
-        #region Client Rpc
-        [ClientRpc]
-        protected void RpcMove(Vector3 movementVector)
+        public void ActivateCamera()
         {
-            MoveTowardTarget(movementVector);
-            RotateTowardMovementVector(movementVector);
-        }
-        #endregion
-
-        #region Client
-        [Client]
-        protected virtual void Start()
-        {
-            if (!isLocalPlayer)
-            {
-                _camera.gameObject.SetActive(false);
-            } else {
-                _mainCamera = Camera.main;
-                if (_mainCamera != null)
-                    _mainCamera.gameObject.SetActive(false);
+            if (_camera != null)
                 _camera.gameObject.SetActive(true);
-                _cameraRelative = _camera.transform.position;
-            }
+            if (_mainCamera != null)
+                _mainCamera.gameObject.SetActive(false);
         }
 
-        [ClientCallback]
-        protected virtual void Update()
+        public void DesactivateCamera()
         {
-            if (!isOwned) return;
-            _camera.transform.position = _body.transform.position + _cameraRelative;
-            if (_controller._inputVector.magnitude != 0)
-            {
-                CmdMove(_controller._inputVector);
-            }
-        }
-
-        [Client]
-        void OnDestroy()
-        {
-            _camera.gameObject.SetActive(false);
             if (_mainCamera != null)
                 _mainCamera.gameObject.SetActive(true);
         }
-
-        [Client]
-        private void MoveTowardTarget(Vector3 movementVector)
+        public void MoveTowardTarget(Vector3 movementVector)
         {
             var speed = _moveSpeed * Time.deltaTime;
             var targetPosition = _body.transform.position + movementVector * speed;
             _body.transform.position = targetPosition;
+            _camera.transform.position = targetPosition + _cameraRelative;
         }
 
-        [Client]
-        private void RotateTowardMovementVector(Vector3 movementVector)
+        public void RotateTowardMovementVector(Vector3 movementVector)
         {
             if (movementVector.magnitude == 0) { return; }
             var rotation = Quaternion.LookRotation(movementVector);
             _body.transform.rotation = Quaternion.RotateTowards(_body.transform.rotation,
                 rotation, _rotateSpeed);
         }
-        #endregion
     }
 }

@@ -1,7 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Mirror;
 using Player.Information;
-using Player.Network.Escapist;
+using Player.Network;
 using UnityEngine;
 
 namespace Network {
@@ -14,6 +15,16 @@ namespace Network {
         public int MaxPlayer
         { get => _maxPlayer; set => _maxPlayer = value; }
         #endregion
+        #region imple private game
+        [field: SerializeField] protected bool _privateGame = false;
+        public bool PrivateGame
+        { get => _privateGame; set => _privateGame = value; }
+        #endregion
+        #region imple uuid game
+        protected string _uuidGame;
+        public string UuidGame
+        { get => _uuidGame; set => _uuidGame = value; }
+        #endregion
         #endregion
 
         #region Var Lobby
@@ -22,11 +33,6 @@ namespace Network {
         [field: Scene] [field: SerializeField] protected string _lobbyScene;
         public string LobbyScene
         { get => _lobbyScene; set => _lobbyScene = value; }
-        #endregion
-        #region imple lobby player infos
-        [field: SerializeField] protected APlayerInfos _playerInfos;
-        public APlayerInfos PlayerInfos
-        { get { return _playerInfos; } set { _playerInfos = value; } }
         #endregion
         #endregion
 
@@ -47,7 +53,13 @@ namespace Network {
         #endregion
         #endregion
 
-        protected virtual void OnServerAddPlayer(NetworkConnectionToClient conn)
+        public override void Awake()
+        {
+            base.Awake();
+            _uuidGame = Guid.NewGuid().ToString();
+        }
+
+        public override void OnServerAddPlayer(NetworkConnectionToClient conn)
         {
             base.OnServerAddPlayer(conn);
         }

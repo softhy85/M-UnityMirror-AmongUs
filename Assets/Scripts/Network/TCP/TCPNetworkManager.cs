@@ -5,8 +5,9 @@ namespace TCP
 {
     public class TCPNetworkManager : ANetworkManager
     {
-        protected void OnServerAddPlayer(NetworkConnectionToClient conn)
+        public override void OnServerAddPlayer(NetworkConnectionToClient conn)
         {
+            base.OnServerAddPlayer(conn);
         }
     }
     

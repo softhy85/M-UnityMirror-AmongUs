@@ -348,8 +348,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1040991530}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: -0.12890945, y: 0.86466885, z: -0.28204814, w: -0.3951949}
+  m_LocalPosition: {x: 12.214162, y: 13.492903, z: 10.570795}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -467,57 +467,9 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1512740100878933769, guid: adfc7e6841b944e9afe2e32028e9a4d1,
         type: 3}
-      propertyPath: _gameScene
-      value: Assets/Scenes/GameScene.unity
-      objectReference: {fileID: 0}
-    - target: {fileID: 1512740100878933769, guid: adfc7e6841b944e9afe2e32028e9a4d1,
-        type: 3}
-      propertyPath: _lobbyScene
-      value: Assets/Scenes/LobbyScene.unity
-      objectReference: {fileID: 0}
-    - target: {fileID: 1512740100878933769, guid: adfc7e6841b944e9afe2e32028e9a4d1,
-        type: 3}
-      propertyPath: _playerInfos
+      propertyPath: playerPrefab
       value: 
-      objectReference: {fileID: 4394438749422133277, guid: 041052ec3aaa16a45bc64842282d61bf,
-        type: 3}
-    - target: {fileID: 1512740100878933769, guid: adfc7e6841b944e9afe2e32028e9a4d1,
-        type: 3}
-      propertyPath: spawnPrefabs.Array.size
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1512740100878933769, guid: adfc7e6841b944e9afe2e32028e9a4d1,
-        type: 3}
-      propertyPath: _playerPrefabs.Array.size
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 1512740100878933769, guid: adfc7e6841b944e9afe2e32028e9a4d1,
-        type: 3}
-      propertyPath: _playerPrefabs.Array.data[1].role
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1512740100878933769, guid: adfc7e6841b944e9afe2e32028e9a4d1,
-        type: 3}
-      propertyPath: _playerPrefabs.Array.data[2].role
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 1512740100878933769, guid: adfc7e6841b944e9afe2e32028e9a4d1,
-        type: 3}
-      propertyPath: _playerPrefabs.Array.data[0].prefab
-      value: 
-      objectReference: {fileID: 3911281668731822890, guid: 7b81dc30135047b685c0b917e87003ad,
-        type: 3}
-    - target: {fileID: 1512740100878933769, guid: adfc7e6841b944e9afe2e32028e9a4d1,
-        type: 3}
-      propertyPath: _playerPrefabs.Array.data[1].prefab
-      value: 
-      objectReference: {fileID: 3911281668731822890, guid: 09efe7fcb663f6e42a32ee4c1083a399,
-        type: 3}
-    - target: {fileID: 1512740100878933769, guid: adfc7e6841b944e9afe2e32028e9a4d1,
-        type: 3}
-      propertyPath: _playerPrefabs.Array.data[2].prefab
-      value: 
-      objectReference: {fileID: 3911281668731822890, guid: 190c65ca49dff9d4b904713a7c996eef,
+      objectReference: {fileID: 2643209067426737844, guid: 1c1c299cd0f617f49856a9a4edbe1790,
         type: 3}
     - target: {fileID: 1512740100878933780, guid: adfc7e6841b944e9afe2e32028e9a4d1,
         type: 3}

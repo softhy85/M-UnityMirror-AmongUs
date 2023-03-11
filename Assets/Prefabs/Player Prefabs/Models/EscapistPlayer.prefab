@@ -225,7 +225,6 @@ GameObject:
   - component: {fileID: 3386698815249173098}
   - component: {fileID: 7714102158021215627}
   - component: {fileID: 8648629714693846295}
-  - component: {fileID: 3911281668731822890}
   m_Layer: 0
   m_Name: EscapistPlayer
   m_TagString: Player
@@ -308,27 +307,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _inputVector: {x: 0, y: 0}
-  _mousePosition: {x: 0, y: 0, z: 0}
---- !u!114 &3911281668731822890
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4939520246062134239}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1912bf7e20214869b3d0693e7204b819, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0.1
-  <_body>k__BackingField: {fileID: 2098791849012631430}
-  <_controller>k__BackingField: {fileID: 8648629714693846295}
-  <_moveSpeed>k__BackingField: 4
-  <_rotateSpeed>k__BackingField: 5
-  <_camera>k__BackingField: {fileID: 7735973357488474930}
 --- !u!1 &6721992726037199491
 GameObject:
   m_ObjectHideFlags: 0
