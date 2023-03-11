@@ -34,6 +34,11 @@ namespace Network {
         public string LobbyScene
         { get => _lobbyScene; set => _lobbyScene = value; }
         #endregion
+        #region imple lobby player infos
+        [field: SerializeField] protected APlayerInfos _playerInfos;
+        public APlayerInfos PlayerInfos
+        { get { return _playerInfos; } set { _playerInfos = value; } }
+        #endregion
         #endregion
 
         #region Var Game
@@ -44,12 +49,6 @@ namespace Network {
         { get => _gameScene;
             set => _gameScene = value;
         }
-        #endregion
-        #region imple player prefabs
-
-        [field: SerializeField] protected PlayerPrefab[] _playerPrefabs;
-        public PlayerPrefab[] PlayerPrefabs
-        { get => _playerPrefabs; set => _playerPrefabs = value; }
         #endregion
         #endregion
 

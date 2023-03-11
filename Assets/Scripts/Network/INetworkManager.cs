@@ -22,7 +22,6 @@ namespace Network {
         public APlayerInfos PlayerInfos { get; set; }
 
         public string GameScene { get; set; }
-        public PlayerPrefab[] PlayerPrefabs { get; set; }
 
         public void OnServerAddPlayer(NetworkConnectionToClient conn);
     }
