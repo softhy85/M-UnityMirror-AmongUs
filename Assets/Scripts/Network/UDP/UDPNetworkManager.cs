@@ -5,7 +5,7 @@ namespace UDP
 {
     public class UDPNetworkManager : ANetworkManager
     {
-        protected void OnServerAddPlayer(NetworkConnectionToClient conn)
+        protected override void OnServerAddPlayer(NetworkConnectionToClient conn)
         {
         }
     }

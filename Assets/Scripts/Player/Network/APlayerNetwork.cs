@@ -8,39 +8,46 @@ namespace Player.Network
     public abstract class APlayerNetwork : NetworkBehaviour, IPlayerNetwork
     {
         #region imple body
-        [field: SerializeField] public GameObject _body { get; set; }
+
+        [field: SerializeField] protected GameObject _body;
         public GameObject Body
-        { get { return _body; } set { _body = value; } }
+        { get => _body; set => _body = value; }
         #endregion
         #region imple controller
-        [field: SerializeField] public APlayerController _controller { get; set; }
-        public APlayerController Controller
-        { get { return _controller; } set { _controller = value; } }
+
+        [field: SerializeField] protected APlayerController _controller;
+        public APlayerController Controller 
+        { get => _controller; set => _controller = value; }
         #endregion
         #region imple moveSpeed
-        [field: SerializeField] public float _moveSpeed { get; set; }
+
+        [field: SerializeField] protected float _moveSpeed;
         public float MoveSpeed 
-        { get { return _moveSpeed; } set { _moveSpeed = value; } }
+        { get => _moveSpeed; set => _moveSpeed = value; }
         #endregion
         #region imple rotateSpeed
-        [field: SerializeField] public float _rotateSpeed { get; set; }
+
+        [field: SerializeField] protected float _rotateSpeed;
         public float RotateSpeed
-        { get { return _rotateSpeed; } set { _rotateSpeed = value; } }
+        { get => _rotateSpeed; set => _rotateSpeed = value; }
         #endregion
         #region imple camera relative
-        protected Vector3 _cameraRelative { get; set; }
+
+        protected Vector3 _cameraRelative;
         public Vector3 CameraRelative
-        { get { return _cameraRelative; } set { _cameraRelative = value; } }
+        { get => _cameraRelative; set => _cameraRelative = value; }
         #endregion
         #region imple camera
-        [field: SerializeField] public Camera _camera { get; set; }
+
+        [field: SerializeField] protected Camera _camera;
         public Camera Camera
-        { get { return _camera; } set { _camera = value; } }
+        { get => _camera; set => _camera = value; }
         #endregion
         #region imple main camera
-        protected Camera _mainCamera { get; set; }
-        public Camera MainCamera
-        { get { return _mainCamera; } set { _mainCamera = value; } }
+
+        protected Camera _mainCamera;
+        public Camera MainCamera 
+        { get => _mainCamera; set => _mainCamera = value; }
         #endregion
 
         #region Server

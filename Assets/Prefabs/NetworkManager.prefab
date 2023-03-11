@@ -104,3 +104,18 @@ MonoBehaviour:
   playerSpawnMethod: 0
   spawnPrefabs: []
   timeInterpolationGui: 0
+  _maxPlayer: 12
+  _lobbyScene: Assets/Scenes/LobbyScene.unity
+  _playerInfos: {fileID: 4394438749422133277, guid: 041052ec3aaa16a45bc64842282d61bf,
+    type: 3}
+  _gameScene: Assets/Scenes/GameScene.unity
+  _playerPrefabs:
+  - prefab: {fileID: 3911281668731822890, guid: 7b81dc30135047b685c0b917e87003ad,
+      type: 3}
+    role: 0
+  - prefab: {fileID: 3911281668731822890, guid: 09efe7fcb663f6e42a32ee4c1083a399,
+      type: 3}
+    role: 1
+  - prefab: {fileID: 3911281668731822890, guid: 190c65ca49dff9d4b904713a7c996eef,
+      type: 3}
+    role: 2

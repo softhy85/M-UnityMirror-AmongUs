@@ -5,16 +5,14 @@ namespace Player.Controller {
     public abstract class APlayerController : MonoBehaviour, IPlayerController
     {
         #region implementation inputVector
-
         public Vector2 _inputVector;
         public Vector2 InputVector
-        { get { return _inputVector; } set { _inputVector = value; } }
-
+        { get => _inputVector; set => _inputVector = value; }
         #endregion
         #region implementation mousePosition
         public Vector3 _mousePosition;
         public Vector3 MousePosition
-        { get { return _mousePosition; } set { _mousePosition = value; } }
+        { get => _mousePosition; set => _mousePosition = value; }
         #endregion
 
         void Update()
