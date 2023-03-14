@@ -56,7 +56,8 @@ namespace Player.Room
             {
                 _otherPlayer.SetActive(true);
                 _oRoleSelected.text = _role.ToString();
-                _oReady.color = Color.red;
+                _oReady.color = _ready ? Color.green : Color.red;
+
             }
             if (_isHost)
             {
