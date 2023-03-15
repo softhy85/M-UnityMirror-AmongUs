@@ -107,7 +107,7 @@ namespace Player.Room
         [Server]
         public void SetReady(bool newReady)
         {
-            this._ready = newReady;
+            _ready = newReady;
             if (_lButtonReady.TryGetComponent<Image>(out var button))
             {
                 button.color = newReady ? Color.green : Color.red;
@@ -120,15 +120,15 @@ namespace Player.Room
 
         
         [Command(requiresAuthority = false)]
-        private void CmdRole(PlayerRole role)
+        private void CmdRole(PlayerRole newRole)
         {
-            SetRole(role);
+            SetRole(newRole);
         }
 
         [Command(requiresAuthority = false)]
-        private void CmdReady()
+        private void CmdReady(bool newReady)
         {
-            SetReady(!_ready);
+            SetReady(newReady);
         }
 
         #endregion
@@ -138,13 +138,17 @@ namespace Player.Room
         [Client]
         public void ClientRoleSelected()
         {
+            if (!isOwned) return;
             CmdRole(Enum.GetValues(typeof(PlayerRole)).Cast<PlayerRole>().ToArray()[_lRoleOption.value]);
         }
 
         [Client]
         public void ClientReady()
         {
-            CmdReady();
+            if (!isOwned) return;
+            var newReady = !_ready;
+            CmdReady(newReady);
+            CmdChangeReadyState(newReady);
         }
         #endregion
 
@@ -181,7 +185,8 @@ namespace Player.Room
             }
             else
             {
-                _oReady.color = ready ? Color.green : Color.red;
+                if (_oReady != null)
+                    _oReady.color = ready ? Color.green : Color.red;
             }
         }
         #endregion
