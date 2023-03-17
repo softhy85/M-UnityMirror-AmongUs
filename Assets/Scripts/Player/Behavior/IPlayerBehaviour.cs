@@ -15,5 +15,8 @@ namespace Player.Behaviour
         public Vector3 CameraRelative { get; set; }
         public Camera Camera { get; set; }
         public Camera MainCamera { get; set; }
+
+        public virtual void SetBehavior(APlayerBehaviour lastBehavior){}
+
     }
 }

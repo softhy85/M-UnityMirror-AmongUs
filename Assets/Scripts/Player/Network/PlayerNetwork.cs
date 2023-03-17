@@ -1,3 +1,4 @@
+using System;
 using Mirror;
 using UnityEngine;
 using Network;
@@ -42,34 +43,51 @@ namespace Player.Network
         #region Server
 
         [Server]
-        protected void AddPrefab(PlayerRole role)
+        private void SetActualPlayer(PlayerRole role)
         {
-            if (_actualPlayer == null) {
-                for (int i = 0; i < _playerPrefabs.Length; i++)
-                {
-                    if (_playerPrefabs[i].role == role) {
-                        _actualPlayer = Instantiate(_playerPrefabs[i].prefab, this.gameObject.transform);
-                        _playerBehaviour = _actualPlayer.GetComponent<APlayerBehaviour>();
-                        _playerBehaviour.ActivateCamera();
-                    }
-                }
-            }
-
-            if (_playerInfos == null)
+            for (int i = 0; i < _playerPrefabs.Length; i++)
             {
-                switch (role)
-                {
-                    case PlayerRole.Escapist:
-                        _playerInfos = gameObject.AddComponent<EscapistInfos>();
-                        break;
-                    case PlayerRole.Phantom:
-                        _playerInfos = gameObject.AddComponent<EscapistInfos>();
-                        break;
-                    case PlayerRole.Monster:
-                        _playerInfos = gameObject.AddComponent<MonsterInfos>();
-                        break;
+                if (_playerPrefabs[i].role == role) {
+                    _actualPlayer = Instantiate(_playerPrefabs[i].prefab, this.gameObject.transform);
+                    _playerBehaviour = _actualPlayer.GetComponent<APlayerBehaviour>();
                 }
             }
+        }
+
+        [Server]
+
+        public void SetRole(PlayerRole role)
+        {
+            if (_actualPlayer == null)
+            {
+                SetActualPlayer(role);
+            }
+            else
+            {
+                GameObject tempActualPlayer = _actualPlayer;
+                APlayerBehaviour tempPlayerBehaviour = _playerBehaviour;
+                SetActualPlayer(role);
+                _playerBehaviour.SetBehavior(_playerBehaviour);
+                Destroy(_actualPlayer);
+            }
+            
+            // if (_playerInfos == null)
+            // {
+            //     switch (role)
+            //     {
+            //         case PlayerRole.Escapist:
+            //             _playerInfos = gameObject.AddComponent<EscapistInfos>();
+            //             break;
+            //         case PlayerRole.Phantom:
+            //             _playerInfos = gameObject.AddComponent<EscapistInfos>();
+            //             break;
+            //         case PlayerRole.Monster:
+            //             _playerInfos = gameObject.AddComponent<MonsterInfos>();
+            //             break;
+            //     }
+            // }
+            //
+            // RpcSetRole();
         }
 
         [Server]
@@ -77,6 +95,8 @@ namespace Player.Network
         {
             if (!isLocalPlayer) return;
             _playerBehaviour.DesactivateCamera();
+            // INFO See in future if we stay like this or not 
+            Destroy(_actualPlayer);
         }
 
         [Command]
@@ -86,12 +106,23 @@ namespace Player.Network
         }
         #endregion
 
+        #region Client
+
+
+        #endregion
+
         #region Client Rpc
         [ClientRpc]
         protected void RpcMove(Vector3 movementVector)
         {
             _playerBehaviour.MoveTowardTarget(movementVector);
             _playerBehaviour.RotateTowardMovementVector(movementVector);
+        }
+
+        [TargetRpc]
+        protected void RpcSetRole()
+        {
+            _playerBehaviour.ActivateCamera();
         }
         #endregion
 

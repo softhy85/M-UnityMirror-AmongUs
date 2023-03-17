@@ -43,13 +43,11 @@ namespace Player.Behaviour
         { get => _cameraRelative; set => _cameraRelative = value; }
         #endregion
         #region imple camera
-
         [field: SerializeField] protected Camera _camera;
         public Camera Camera
         { get => _camera; set => _camera = value; }
         #endregion
         #region imple main camera
-
         protected Camera _mainCamera;
         public Camera MainCamera 
         { get => _mainCamera; set => _mainCamera = value; }
@@ -76,8 +74,6 @@ namespace Player.Behaviour
             var targetVector = new Vector3(movementVector.x, 0,
                 movementVector.y);
             var eulerMovementVector = Quaternion.Euler(0, _camera.gameObject.transform.eulerAngles.y, 0) * targetVector;
-            var speed = _moveSpeed * Time.deltaTime;
-            var targetPosition = _body.transform.position + movementVector * speed;
             _playerNetwork.CmdMove(eulerMovementVector);
         }
 
@@ -108,6 +104,11 @@ namespace Player.Behaviour
             var rotation = Quaternion.LookRotation(movementVector);
             _body.transform.rotation = Quaternion.RotateTowards(_body.transform.rotation,
                 rotation, _rotateSpeed);
+        }
+
+        public virtual void SetBehavior(APlayerBehaviour lastBehavior)
+        {
+            // TODO some important infos (if there are)
         }
     }
 }

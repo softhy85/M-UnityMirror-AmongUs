@@ -84,7 +84,6 @@ namespace Mirror
                 if (wasReady != nowReady)
                 {
                     _allPlayersReady = value;
-                    Debug.Log("_allPlayersReady = " + _allPlayersReady);
                     if (nowReady)
                     {
                         OnRoomServerPlayersReady();
@@ -132,8 +131,6 @@ namespace Mirror
                         ReadyPlayers++;
                 }
             }
-            Debug.Log("ReadyPlayers = " + ReadyPlayers);
-            Debug.Log("CurrentPlayers = " + CurrentPlayers);
             if (CurrentPlayers == ReadyPlayers)
                 CheckReadyToBegin();
             else
@@ -160,7 +157,7 @@ namespace Mirror
             }
         }
 
-        void SceneLoadedForPlayer(NetworkConnectionToClient conn, GameObject roomPlayer)
+        protected virtual void  SceneLoadedForPlayer(NetworkConnectionToClient conn, GameObject roomPlayer)
         {
             Debug.Log($"NetworkRoom SceneLoadedForPlayer scene: {SceneManager.GetActiveScene().path} {conn}");
 
@@ -202,12 +199,10 @@ namespace Mirror
 
             int numberOfReadyPlayers = NetworkServer.connections.Count(conn => conn.Value != null && conn.Value.identity.gameObject.GetComponent<NetworkRoomPlayer>().readyToBegin);
             bool enoughReadyPlayers = minPlayers <= 0 || numberOfReadyPlayers >= minPlayers;
-            Debug.Log("enoughReadyPlayers = " + enoughReadyPlayers);
             if (enoughReadyPlayers)
             {
                 pendingPlayers.Clear();
                 allPlayersReady = true;
-                Debug.Log("Test");
             }
             else
             {

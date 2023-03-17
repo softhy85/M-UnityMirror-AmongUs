@@ -47,16 +47,16 @@ namespace Player.Room
                 _lRoleOption.ClearOptions();
                 _lRoleOption.AddOptions(playerRoles);
                 _lRoleOption.SetValueWithoutNotify(0);
-                if (_lButtonReady.TryGetComponent<Image>(out var button))
-                {
-                    button.color = Color.red;
-                }
+                if (_lButtonReady != null)
+                    if (_lButtonReady.TryGetComponent<Image>(out var button))
+                        button.color = _ready ? Color.green : Color.red;
             }
             else
             {
                 _otherPlayer.SetActive(true);
                 _oRoleSelected.text = _role.ToString();
-                _oReady.color = _ready ? Color.green : Color.red;
+                if (_oReady != null)
+                    _oReady.color = _ready ? Color.green : Color.red;
 
             }
             if (_isHost)
@@ -92,9 +92,16 @@ namespace Player.Room
             return _isHost;
         }
 
+        [Server]
         public void SetHosting(bool host)
         {
             _isHost = host;
+        }
+
+        [Server]
+        public PlayerRole GetRole()
+        {
+            return _role;
         }
 
         [Server]
@@ -108,10 +115,9 @@ namespace Player.Room
         public void SetReady(bool newReady)
         {
             _ready = newReady;
-            if (_lButtonReady.TryGetComponent<Image>(out var button))
-            {
-                button.color = newReady ? Color.green : Color.red;
-            }
+            if (_lButtonReady != null)
+                if (_lButtonReady.TryGetComponent<Image>(out var button) && button != null)
+                    button.color = newReady ? Color.green : Color.red;
             RpcReady(_ready);
         }
         #endregion
@@ -178,10 +184,9 @@ namespace Player.Room
         {
             if (isLocalPlayer)
             {
-                if (_lButtonReady.TryGetComponent<Image>(out var button))
-                {
-                    button.color = ready ? Color.green : Color.red;
-                }
+                if (_lButtonReady != null)
+                    if (_lButtonReady.TryGetComponent<Image>(out var button) && button != null)
+                        button.color = ready ? Color.green : Color.red;
             }
             else
             {
