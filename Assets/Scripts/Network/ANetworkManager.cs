@@ -39,6 +39,7 @@ namespace Network {
         public APlayerInfos PlayerInfos
         { get { return _playerInfos; } set { _playerInfos = value; } }
         #endregion
+        protected List<NetworkConnectionToClient> _connections;
         #endregion
 
         #region Var Game
@@ -61,6 +62,16 @@ namespace Network {
         public override void OnServerAddPlayer(NetworkConnectionToClient conn)
         {
             base.OnServerAddPlayer(conn);
+            // _connections.Add(conn);
+            var playerNetwork = conn.identity.GetComponent<PlayerNetwork>();
+            Debug.Log("Test");
+            if (playerNetwork) {
+                Debug.Log("Test 2 ");
+                // if (_connections.Count >= 1)
+                    playerNetwork.AddPrefab(PlayerRole.Escapist);
+                // else
+                    // playerNetwork.AddPrefab(PlayerRole.Monster);
+            }
         }
     }
 }

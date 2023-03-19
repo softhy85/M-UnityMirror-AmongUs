@@ -18,6 +18,8 @@ namespace Player.Network
         public APlayerInfos PlayerInfos
         { get => _playerInfos; set => _playerInfos = value; }
         #endregion
+        [SyncVar]
+        protected PlayerRole _role = PlayerRole.Escapist;
         #endregion
 
         #region non var sync
@@ -42,7 +44,7 @@ namespace Player.Network
         #region Server
 
         [Server]
-        protected void AddPrefab(PlayerRole role)
+        public void AddPrefab(PlayerRole role)
         {
             if (_actualPlayer == null) {
                 for (int i = 0; i < _playerPrefabs.Length; i++)
@@ -50,26 +52,28 @@ namespace Player.Network
                     if (_playerPrefabs[i].role == role) {
                         _actualPlayer = Instantiate(_playerPrefabs[i].prefab, this.gameObject.transform);
                         _playerBehaviour = _actualPlayer.GetComponent<APlayerBehaviour>();
-                        _playerBehaviour.ActivateCamera();
                     }
                 }
             }
 
-            if (_playerInfos == null)
-            {
-                switch (role)
-                {
-                    case PlayerRole.Escapist:
-                        _playerInfos = gameObject.AddComponent<EscapistInfos>();
-                        break;
-                    case PlayerRole.Phantom:
-                        _playerInfos = gameObject.AddComponent<EscapistInfos>();
-                        break;
-                    case PlayerRole.Monster:
-                        _playerInfos = gameObject.AddComponent<MonsterInfos>();
-                        break;
-                }
-            }
+            _role = role;
+
+            // if (_playerInfos == null)
+            // {
+            //     switch (role)
+            //     {
+            //         case PlayerRole.Escapist:
+            //             _playerInfos = gameObject.AddComponent<EscapistInfos>();
+            //             break;
+            //         case PlayerRole.Phantom:
+            //             _playerInfos = gameObject.AddComponent<EscapistInfos>();
+            //             break;
+            //         case PlayerRole.Monster:
+            //             _playerInfos = gameObject.AddComponent<MonsterInfos>();
+            //             break;
+            //     }
+            // }
+            RpcCamera();
         }
 
         [Server]
@@ -92,6 +96,13 @@ namespace Player.Network
         {
             _playerBehaviour.MoveTowardTarget(movementVector);
             _playerBehaviour.RotateTowardMovementVector(movementVector);
+        }
+
+        [ClientRpc]
+        protected void RpcCamera()
+        {
+            if (isLocalPlayer && _playerBehaviour)
+                _playerBehaviour.ActivateCamera();
         }
         #endregion
 

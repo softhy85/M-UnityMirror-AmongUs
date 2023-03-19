@@ -465,12 +465,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: NetworkManager
       objectReference: {fileID: 0}
-    - target: {fileID: 1512740100878933769, guid: adfc7e6841b944e9afe2e32028e9a4d1,
-        type: 3}
-      propertyPath: playerPrefab
-      value: 
-      objectReference: {fileID: 2643209067426737844, guid: 1c1c299cd0f617f49856a9a4edbe1790,
-        type: 3}
     - target: {fileID: 1512740100878933780, guid: adfc7e6841b944e9afe2e32028e9a4d1,
         type: 3}
       propertyPath: m_RootOrder
@@ -525,6 +519,26 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2109041657192199210, guid: adfc7e6841b944e9afe2e32028e9a4d1,
+        type: 3}
+      propertyPath: _lobbyScene
+      value: Assets/Scenes/LobbyScene.unity
+      objectReference: {fileID: 0}
+    - target: {fileID: 2109041657192199210, guid: adfc7e6841b944e9afe2e32028e9a4d1,
+        type: 3}
+      propertyPath: _privateGame
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2109041657192199210, guid: adfc7e6841b944e9afe2e32028e9a4d1,
+        type: 3}
+      propertyPath: autoConnectClientBuild
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6490117308617406530, guid: adfc7e6841b944e9afe2e32028e9a4d1,
+        type: 3}
+      propertyPath: debugLog
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: adfc7e6841b944e9afe2e32028e9a4d1, type: 3}
