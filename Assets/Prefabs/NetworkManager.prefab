@@ -72,7 +72,7 @@ MonoBehaviour:
   MaximizeSocketBuffers: 1
   ReliableMaxMessageSize: 298449
   UnreliableMaxMessageSize: 1199
-  debugLog: 0
+  debugLog: 1
   statisticsGUI: 0
   statisticsLog: 0
 --- !u!114 &2109041657192199210
@@ -90,7 +90,7 @@ MonoBehaviour:
   dontDestroyOnLoad: 1
   runInBackground: 1
   autoStartServerBuild: 1
-  autoConnectClientBuild: 0
+  autoConnectClientBuild: 1
   sendRate: 30
   offlineScene: 
   onlineScene: 
@@ -102,10 +102,19 @@ MonoBehaviour:
     type: 3}
   autoCreatePlayer: 1
   playerSpawnMethod: 0
-  spawnPrefabs: []
+  spawnPrefabs:
+  - {fileID: 4939520246062134239, guid: 7b81dc30135047b685c0b917e87003ad, type: 3}
+  - {fileID: 4939520246062134239, guid: 190c65ca49dff9d4b904713a7c996eef, type: 3}
+  - {fileID: 4939520246062134239, guid: 09efe7fcb663f6e42a32ee4c1083a399, type: 3}
   timeInterpolationGui: 0
-  _maxPlayer: 12
-  _privateGame: 0
-  _lobbyScene: 
-  _playerInfos: {fileID: 0}
+  playerPrefabs:
+  - prefab: {fileID: 4939520246062134239, guid: 7b81dc30135047b685c0b917e87003ad,
+      type: 3}
+    role: 0
+  - prefab: {fileID: 4939520246062134239, guid: 09efe7fcb663f6e42a32ee4c1083a399,
+      type: 3}
+    role: 1
+  - prefab: {fileID: 4939520246062134239, guid: 190c65ca49dff9d4b904713a7c996eef,
+      type: 3}
+    role: 2
   _gameScene: Assets/Scenes/GameScene.unity

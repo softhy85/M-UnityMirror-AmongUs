@@ -14,14 +14,14 @@ namespace Network {
 
     public interface INetworkManager
     {
-        public int MaxPlayer { get; set; }
-        public bool PrivateGame { get; set; }
-        public string UuidGame { get; set; }
-
-        public string LobbyScene { get; set; }
-        public APlayerInfos PlayerInfos { get; set; }
-
-        public string GameScene { get; set; }
+        // public int MaxPlayer { get; set; }
+        // public bool PrivateGame { get; set; }
+        // public string UuidGame { get; set; }
+        //
+        // public string LobbyScene { get; set; }
+        // public APlayerInfos PlayerInfos { get; set; }
+        //
+        // public string GameScene { get; set; }
 
         public void OnServerAddPlayer(NetworkConnectionToClient conn);
     }
