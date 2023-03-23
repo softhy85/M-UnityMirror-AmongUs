@@ -165,7 +165,7 @@ namespace Player.Behaviour
             if (isLocalPlayer && !camera.gameObject.activeSelf)
             {
                 ActivateCamera();
-            } else if (camera.gameObject.activeSelf)
+            } else if (!isLocalPlayer && camera.gameObject.activeSelf)
                 DesactivateCamera();
         }
 
