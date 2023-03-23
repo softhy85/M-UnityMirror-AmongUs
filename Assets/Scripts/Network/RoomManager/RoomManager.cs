@@ -27,6 +27,12 @@ namespace Network {
                     player.SetHosting(true);
                 }
             }
+            foreach(var (key, cliConn) in NetworkServer.connections) {
+                if (cliConn.identity.TryGetComponent<RoomPlayer>(out var roomPlayer))
+                {
+                    roomPlayer.CmdSetPseudo("");
+                }
+            }
         }
 
         public override GameObject OnRoomServerCreateGamePlayer(
@@ -38,18 +44,14 @@ namespace Network {
             {
                 if (playerPrefabs[i].role == role)
                 {
-                    Debug.Log("i - " + i);
-                    Debug.Log("role - " + playerPrefabs[i].role);
-                    Debug.Log("prefab - " + playerPrefabs[i].prefab);
-                    if (playerPrefabs[i].prefab) {
-                        Debug.Log("Test 1");
-                        GameObject player = Instantiate(playerPrefabs[i].prefab);
-                        return (player);
-                    }
-                    else
-                    {
-                        Debug.Log("Test 2");
-                    }
+                    GameObject player = Instantiate(playerPrefabs[i].prefab);
+                    return (player);
+                }
+            }
+            foreach(var (key, cliConn) in NetworkServer.connections) {
+                if (cliConn.identity.TryGetComponent<APlayerBehaviour>(out var playerBehaviour))
+                {
+                    playerBehaviour.CmdActivateCamera();
                 }
             }
 

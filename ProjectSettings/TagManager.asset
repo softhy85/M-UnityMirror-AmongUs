@@ -6,6 +6,9 @@ TagManager:
   tags:
   - Floor
   - NetworkManager
+  - RoomCanvas
+  - RoomListCanvas
+  - PlayerInfos
   layers:
   - Default
   - TransparentFX

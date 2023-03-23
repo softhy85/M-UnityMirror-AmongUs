@@ -15,6 +15,7 @@ namespace Player.Room
         [SyncVar] private PlayerRole role = PlayerRole.Escapist;
         [SyncVar] public bool isReady = false;
         [SyncVar] private bool isHost = false;
+        [SyncVar] private string pseudo = "";
 
         private GameObject playerListCanvas;
         private bool initialize = false;
@@ -22,6 +23,8 @@ namespace Player.Room
         [SerializeField] private GameObject parentPlayer;
         [SerializeField] private GameObject localPlayer;
         [SerializeField] private GameObject otherPlayer;
+
+        [SerializeField] private TMP_Text pseudoPlayer;
 
         [Header("UI Host")]
         [SerializeField] private TMP_Text HostPlayer;
@@ -38,7 +41,7 @@ namespace Player.Room
         #region Server
 
         [Server]
-        public bool isHosting()
+        public bool IsHosting()
         {
             return isHost;
         }
@@ -58,8 +61,15 @@ namespace Player.Room
         [Server]
         public void SetRole(PlayerRole newRole)
         {
-            role = newRole;
+            if (!isReady)
+                role = newRole;
             RpcRole(role);
+        }
+
+        [Server]
+        public bool IsReady()
+        {
+            return isReady;
         }
 
         [Server]
@@ -69,25 +79,77 @@ namespace Player.Room
             if (lButtonReady != null)
                 if (lButtonReady.TryGetComponent<Image>(out var button) && button != null)
                     button.color = newReady ? Color.green : Color.red;
+            readyToBegin = isReady;
+            CmdChangeReadyState(isReady);
             RpcReady(isReady);
         }
-        #endregion
+
+        [Server]
+        private bool checkOtherClientReady()
+        {
+            int nbMonster = 0;
+            int nbEscapist = 0;
+            if (NetworkServer.connections.Count == 1)
+                return false;
+            foreach (var (key, conn) in NetworkServer.connections)
+            {
+                if (!conn.identity.isLocalPlayer && conn.identity.gameObject.TryGetComponent<RoomPlayer>(out var roomPlayer))
+                {
+                    if (!roomPlayer.IsReady())
+                    {
+                        return false;
+                    }
+
+                    var actRole = roomPlayer.GetRole();
+                    if (actRole == PlayerRole.Escapist)
+                        nbEscapist += 1;
+                    else if (actRole == PlayerRole.Monster)
+                        nbMonster += 1;
+                }
+            }
+            if (GetRole() == PlayerRole.Escapist)
+                nbEscapist += 1;
+            else if (GetRole() == PlayerRole.Monster)
+                nbMonster += 1;
+
+            if (nbMonster >= 1 && nbEscapist >= 1)
+                return true;
+            return false;
+        }
 
         #region Command
 
-        
-        [Command(requiresAuthority = false)]
+
+        [Command]
         private void CmdRole(PlayerRole newRole)
         {
             SetRole(newRole);
         }
 
-        [Command(requiresAuthority = false)]
+        [Command]
         private void CmdReady(bool newReady)
         {
-            SetReady(newReady);
+            if (isHost)
+            {
+                if (checkOtherClientReady())
+                    SetReady(newReady);
+            } else {
+                SetReady(newReady);
+            }
         }
 
+        [Command]
+        public void CmdSetPseudo(string newPseudo)
+        {
+            if (pseudo != "")
+                RpcSetPseudo(pseudo);
+            else if (newPseudo != "") {
+                pseudo = newPseudo;
+                RpcSetPseudo(newPseudo);
+            } else
+                RpcSetPseudo("Pseudo");
+        }
+        #endregion
         #endregion
 
         #region Client
@@ -102,15 +164,18 @@ namespace Player.Room
         [Client]
         public void ClientReady()
         {
-            if (!isOwned) return;
-            var newReady = !isReady;
-            CmdReady(newReady);
-            CmdChangeReadyState(newReady);
+            if (!isLocalPlayer) return;
+            CmdReady(!isReady);
         }
         #endregion
 
         #region ClientRpc
 
+        [ClientRpc]
+        void RpcSetPseudo(string newPseudo)
+        {
+            pseudoPlayer.text = newPseudo;
+        }
         [ClientRpc]
         void RpcRole(PlayerRole newRole)
         {
@@ -122,7 +187,8 @@ namespace Player.Room
                        newRole.ToString() != lRoleOption.options[i].text)
                     i++;
                 if (i > lRoleOption.options.Count) return;
-                lRoleSelected.text = newRole.ToString();
+                var listAvailableStrings = lRoleOption.options.Select(option => option.text).ToList();
+                lRoleOption.value = listAvailableStrings.IndexOf(newRole.ToString());
             }
             else
             {
@@ -151,6 +217,19 @@ namespace Player.Room
 
         public void Initiate()
         {
+            var playersInfos = GameObject.FindGameObjectsWithTag("PlayerInfos");
+            if (playersInfos.Length == 1)
+            {
+                if (isLocalPlayer && playersInfos[0]
+                    .TryGetComponent<PlayerInfos>(out var playerInfos))
+                {
+                    var newPseudo = playerInfos.GetPseudo();
+                    if (newPseudo != "")
+                        CmdSetPseudo(newPseudo);
+                    else
+                        CmdSetPseudo("Pseudo");
+                }
+            }
             parentPlayer.transform.SetParent(playerListCanvas.transform);
             if (isLocalPlayer) {
                 localPlayer.SetActive(true);
