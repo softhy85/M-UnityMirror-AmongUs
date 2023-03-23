@@ -98,7 +98,7 @@ namespace Player.Behaviour.Escapist
             base.Start();
             if (isLocalPlayer || isClient)
             {
-                CmdSetRole(PlayerRole.Phantom);
+                actualRole = PlayerRole.Phantom;
                 escapistController = new EscapistController();
                 escapistController.Escapist.Enable();
                 BindTriggers();

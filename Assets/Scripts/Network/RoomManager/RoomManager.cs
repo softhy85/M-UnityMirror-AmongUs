@@ -55,5 +55,58 @@ namespace Network {
 
             return (null);
         }
+        private void PlayerKilled(NetworkConnectionToClient conn, EscapistBehaviour escapistBehaviour)
+        {
+            GameObject phantomObj = null;
+            for (int i = 0; i < playerPrefabs.Length; i++)
+            {
+                if (playerPrefabs[i].role == PlayerRole.Phantom)
+                {
+                    phantomObj = Instantiate(playerPrefabs[i].prefab);
+                    phantomObj.name = $"{phantomObj.name} [connId={conn.connectionId}]";
+                    NetworkServer.Spawn(phantomObj);
+                }
+            }
+
+            if (phantomObj)
+            {
+                NetworkServer.RemovePlayerForConnection(conn, conn.identity.gameObject);
+                NetworkServer.AddPlayerForConnection(conn, phantomObj);
+                if (conn.identity.TryGetComponent<APlayerBehaviour>(out var playerBehaviour))
+                {
+                    playerBehaviour.CmdActivateCamera();
+                }
+                escapistBehaviour.CmdDestroy();
+            }
+        }
+
+        public override void Update()
+        {
+            base.Update();
+            if (!Utils.IsSceneActive(RoomScene))
+            {
+                foreach (var (key, conn) in NetworkServer.connections)
+                {
+                    if (conn.identity.gameObject)
+                    {
+                        if (conn.identity.gameObject
+                            .TryGetComponent<APlayerBehaviour>(
+                                out var playerBehaviour))
+                        {
+                            if (playerBehaviour.GetRole() ==
+                                PlayerRole.Escapist)
+                            {
+                                EscapistBehaviour escapistBehaviour =
+                                    (EscapistBehaviour)playerBehaviour;
+                                if (escapistBehaviour.IsKilled())
+                                {
+                                    PlayerKilled(conn, escapistBehaviour);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }
