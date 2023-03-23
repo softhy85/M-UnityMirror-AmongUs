@@ -1,114 +1,190 @@
 ﻿using System;
+using System.Collections.Generic;
+using Mirror;
+using Player.Information;
 using UnityEngine;
-using Player.Controller;
 using Player.Network;
 
 namespace Player.Behaviour
 {
-    public class APlayerBehaviour : MonoBehaviour, IPlayerBehaviour
+    [Serializable]
+    public struct body
     {
-        #region imple player network
-         protected PlayerNetwork _playerNetwork;
-         public PlayerNetwork PlayerNetwork
-        { get => _playerNetwork; set => _playerNetwork = value; }
-        #endregion
-        #region imple body
-        [field: SerializeField] protected GameObject _body;
+        public GameObject gameObject;
+        public Material material;
+        public NetworkAnimator networkAnimator;
+        public Animator animator;
+    }
+    public class APlayerBehaviour : NetworkBehaviour
+    {
+        protected Vector2 inputVector = new Vector2(0, 0);
 
-        public GameObject Body
-        { get => _body; set => _body = value; }
-        #endregion
-        #region imple controller
+        [SerializeField] protected List<body> bodies;
 
-        [field: SerializeField] protected APlayerController _controller;
-        public APlayerController Controller 
-        { get => _controller; set => _controller = value; }
-        #endregion
-        #region imple moveSpeed
+        protected int actualBody = 0;
+        [SerializeField] protected float moveSpeed;
 
-        [field: SerializeField] protected float _moveSpeed;
-        public float MoveSpeed 
-        { get => _moveSpeed; set => _moveSpeed = value; }
-        #endregion
-        #region imple rotateSpeed
+        [field: SerializeField] protected float rotateSpeed;
 
-        [field: SerializeField] protected float _rotateSpeed;
-        public float RotateSpeed
-        { get => _rotateSpeed; set => _rotateSpeed = value; }
-        #endregion
-        #region imple camera relative
+        [field: SerializeField] protected Camera camera;
 
-        protected Vector3 _cameraRelative;
-        public Vector3 CameraRelative
-        { get => _cameraRelative; set => _cameraRelative = value; }
-        #endregion
-        #region imple camera
-        [field: SerializeField] protected Camera _camera;
-        public Camera Camera
-        { get => _camera; set => _camera = value; }
-        #endregion
-        #region imple main camera
-        protected Camera _mainCamera;
-        public Camera MainCamera 
-        { get => _mainCamera; set => _mainCamera = value; }
-        #endregion
+        [SyncVar] protected Vector3 cameraRelative;
 
-        protected void Awake()
+        protected Camera mainCamera;
+
+        protected Color? defaultColor = null;
+
+        protected PlayerRole actualRole;
+
+
+        #region Server
+
+
+        [Server]
+        void OnDestroy()
         {
-            _playerNetwork = this.gameObject.transform.parent
-                .GetComponent<PlayerNetwork>();
-            _mainCamera = Camera.main;
-            if (_camera != null)
-                _camera.gameObject.SetActive(false);
-            _cameraRelative = _camera.transform.position;
+            DesactivateCamera();
         }
 
-        protected virtual void Update()
+        #region Command
+
+        
+        [Command]
+        public void CmdMove(Vector3 movementVector, Vector3 targetVector, float actualSpeed)
         {
-            if (_controller._inputVector.magnitude != 0)
-            {
-                AskToMove(_controller._inputVector);
-            }
+            RpcMove(movementVector, targetVector, actualSpeed);
         }
-        private void AskToMove(Vector3 movementVector) {
+
+        [Command]
+        public void CmdStopMoving()
+        {
+            RpcStopMoving();
+        }
+
+        [Command]
+        public void CmdActivateCamera()
+        {
+            RpcActivateCamera();
+        }
+
+        #endregion
+
+        #endregion
+
+        #region Client
+
+        [Client]
+        protected virtual void AskToMove(Vector3 movementVector)
+        {
             var targetVector = new Vector3(movementVector.x, 0,
                 movementVector.y);
-            var eulerMovementVector = Quaternion.Euler(0, _camera.gameObject.transform.eulerAngles.y, 0) * targetVector;
-            _playerNetwork.CmdMove(eulerMovementVector);
+            var eulerMovementVector = Quaternion.Euler(0, camera.gameObject.transform.eulerAngles.y, 0) * targetVector;
+            var speed = moveSpeed;
+            var actualVecSpeed = movementVector * speed;
+            var actualSpeed = Mathf.Sqrt(actualVecSpeed.x * actualVecSpeed.x +
+                                         actualVecSpeed.y * actualVecSpeed.y);
+            var targetPosition = bodies[actualBody].gameObject.transform.position + eulerMovementVector * speed * Time.deltaTime;
+            CmdMove(eulerMovementVector, targetPosition, actualSpeed);
         }
 
-        public void ActivateCamera()
+        [Client]
+        private void MoveTowardTarget(Vector3 targetPosition, float actualSpeed)
         {
-            if (_camera != null)
-                _camera.gameObject.SetActive(true);
-            if (_mainCamera != null)
-                _mainCamera.gameObject.SetActive(false);
+            if (bodies[actualBody].animator.enabled)
+                bodies[actualBody].animator.SetFloat("speed", actualSpeed);
+            bodies[actualBody].gameObject.transform.position = targetPosition;
+            camera.transform.position = targetPosition + cameraRelative;
         }
 
-        public void DesactivateCamera()
-        {
-            if (_mainCamera != null)
-                _mainCamera.gameObject.SetActive(true);
-        }
-        public void MoveTowardTarget(Vector3 movementVector)
-        {
-            var speed = _moveSpeed * Time.deltaTime;
-            var targetPosition = _body.transform.position + movementVector * speed;
-            _body.transform.position = targetPosition;
-            _camera.transform.position = targetPosition + _cameraRelative;
-        }
-
-        public void RotateTowardMovementVector(Vector3 movementVector)
+        [Client]
+        private void RotateTowardMovementVector(Vector3 movementVector)
         {
             if (movementVector.magnitude == 0) { return; }
             var rotation = Quaternion.LookRotation(movementVector);
-            _body.transform.rotation = Quaternion.RotateTowards(_body.transform.rotation,
-                rotation, _rotateSpeed);
+            bodies[actualBody].gameObject.transform.rotation = Quaternion.RotateTowards(bodies[actualBody].gameObject.transform.rotation,
+                rotation, rotateSpeed);
         }
 
-        public virtual void SetBehavior(APlayerBehaviour lastBehavior)
+        [Client]
+        public void ActivateCamera()
         {
-            // TODO some important infos (if there are)
+            if (isLocalPlayer) {
+                if (camera != null) {
+                    camera.gameObject.SetActive(true);
+                    // cameraRelative = camera.transform.position;
+                }
+                if (mainCamera != null)
+                    mainCamera.gameObject.SetActive(false);
+            }
         }
+
+        [Client]
+        private void DesactivateCamera()
+        {
+            if (camera != null)
+                camera.gameObject.SetActive(false);
+        }
+
+        #endregion
+
+        #region ClientRpc
+
+        [ClientRpc]
+        protected void RpcMove(Vector3 movementVector, Vector3 targetVector, float actualSpeed)
+        {
+            // Debug.Log("Test Moving");
+            // Debug.Log("targetVector - " + targetVector);
+            // Debug.Log("actualSpeed - " + actualSpeed);
+            MoveTowardTarget(targetVector, actualSpeed);
+            RotateTowardMovementVector(movementVector);
+        }
+
+        [ClientRpc]
+        protected void RpcStopMoving()
+        {
+            if (bodies[actualBody].animator.enabled)
+                bodies[actualBody].animator.SetFloat("speed", 0);
+        }
+
+        [ClientRpc]
+        protected void RpcActivateCamera()
+        {
+            Debug.Log("Camara - LocalPlayer - " + isLocalPlayer);
+            if (isLocalPlayer) {
+                ActivateCamera();
+            } else
+                DesactivateCamera();
+        }
+
+        #endregion
+
+        #region Other
+        protected virtual void Update()
+        {
+            if (!camera) return;
+            if (isLocalPlayer && !camera.gameObject.activeSelf)
+            {
+                ActivateCamera();
+            } else if (camera.gameObject.activeSelf)
+                DesactivateCamera();
+        }
+
+        public virtual void Start()
+        {
+            if (isLocalPlayer)
+            {
+                mainCamera = Camera.main;
+                if (camera != null)
+                    camera.gameObject.SetActive(false);
+                cameraRelative = camera.transform.position;
+            }
+        }
+
+        public PlayerRole GetRole()
+        {
+            return actualRole;
+        }
+
+        #endregion
     }
 }

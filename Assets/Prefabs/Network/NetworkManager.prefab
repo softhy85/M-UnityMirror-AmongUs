@@ -9,9 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1512740100878933780}
-  - component: {fileID: 1512740100878933771}
-  - component: {fileID: 1512740100878933770}
-  - component: {fileID: 1512740100878933769}
+  - component: {fileID: 7612413914113850405}
+  - component: {fileID: 6490117308617406530}
+  - component: {fileID: 2109041657192199210}
   m_Layer: 0
   m_Name: NetworkManager
   m_TagString: Untagged
@@ -34,7 +34,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1512740100878933771
+--- !u!114 &7612413914113850405
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -48,7 +48,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   offsetX: 0
   offsetY: 0
---- !u!114 &1512740100878933770
+--- !u!114 &6490117308617406530
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -72,10 +72,10 @@ MonoBehaviour:
   MaximizeSocketBuffers: 1
   ReliableMaxMessageSize: 298449
   UnreliableMaxMessageSize: 1199
-  debugLog: 0
+  debugLog: 1
   statisticsGUI: 0
   statisticsLog: 0
---- !u!114 &1512740100878933769
+--- !u!114 &2109041657192199210
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -90,32 +90,31 @@ MonoBehaviour:
   dontDestroyOnLoad: 1
   runInBackground: 1
   autoStartServerBuild: 1
-  autoConnectClientBuild: 0
+  autoConnectClientBuild: 1
   sendRate: 30
   offlineScene: 
   onlineScene: 
-  transport: {fileID: 1512740100878933770}
+  transport: {fileID: 6490117308617406530}
   networkAddress: localhost
   maxConnections: 100
   authenticator: {fileID: 0}
-  playerPrefab: {fileID: 4939520246062134239, guid: 7b81dc30135047b685c0b917e87003ad,
+  playerPrefab: {fileID: 2643209067426737844, guid: 1c1c299cd0f617f49856a9a4edbe1790,
     type: 3}
   autoCreatePlayer: 1
   playerSpawnMethod: 0
-  spawnPrefabs: []
+  spawnPrefabs:
+  - {fileID: 4939520246062134239, guid: 7b81dc30135047b685c0b917e87003ad, type: 3}
+  - {fileID: 4939520246062134239, guid: 190c65ca49dff9d4b904713a7c996eef, type: 3}
+  - {fileID: 4939520246062134239, guid: 09efe7fcb663f6e42a32ee4c1083a399, type: 3}
   timeInterpolationGui: 0
-  _maxPlayer: 12
-  _lobbyScene: Assets/Scenes/LobbyScene.unity
-  _playerInfos: {fileID: 4394438749422133277, guid: 041052ec3aaa16a45bc64842282d61bf,
-    type: 3}
-  _gameScene: Assets/Scenes/GameScene.unity
-  _playerPrefabs:
-  - prefab: {fileID: 3911281668731822890, guid: 7b81dc30135047b685c0b917e87003ad,
+  playerPrefabs:
+  - prefab: {fileID: 4939520246062134239, guid: 7b81dc30135047b685c0b917e87003ad,
       type: 3}
     role: 0
-  - prefab: {fileID: 3911281668731822890, guid: 09efe7fcb663f6e42a32ee4c1083a399,
+  - prefab: {fileID: 4939520246062134239, guid: 09efe7fcb663f6e42a32ee4c1083a399,
       type: 3}
     role: 1
-  - prefab: {fileID: 3911281668731822890, guid: 190c65ca49dff9d4b904713a7c996eef,
+  - prefab: {fileID: 4939520246062134239, guid: 190c65ca49dff9d4b904713a7c996eef,
       type: 3}
     role: 2
+  _gameScene: Assets/Scenes/GameScene.unity
