@@ -277,7 +277,7 @@ namespace Player.Behaviour.Monster
         {
             base.Start();
             if (isLocalPlayer || isClient) {
-                actualRole = PlayerRole.Monster;
+                CmdSetRole(PlayerRole.Monster);
                 monsterController = new MonsterController();
                 monsterController.Monster.Enable();
                 BindTriggers();

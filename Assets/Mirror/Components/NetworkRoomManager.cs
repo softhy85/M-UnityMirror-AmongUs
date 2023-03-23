@@ -157,7 +157,7 @@ namespace Mirror
             }
         }
 
-        protected virtual void  SceneLoadedForPlayer(NetworkConnectionToClient conn, GameObject roomPlayer)
+        private void  SceneLoadedForPlayer(NetworkConnectionToClient conn, GameObject roomPlayer)
         {
             Debug.Log($"NetworkRoom SceneLoadedForPlayer scene: {SceneManager.GetActiveScene().path} {conn}");
 

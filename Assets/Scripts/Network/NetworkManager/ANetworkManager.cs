@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using Mirror;
+﻿using Mirror;
 using Player.Behaviour;
 using Player.Behaviour.Escapist;
 using Player.Information;
-using Player.Network;
+using Player.Information.Structure;
 using UnityEngine;
 
 namespace Network {

@@ -69,15 +69,16 @@ MonoBehaviour:
   showRoomGUI: 1
   readyToBegin: 0
   index: 0
-  _parentPlayer: {fileID: 2660638929791481657}
-  _localPlayer: {fileID: 3103157500097519247}
-  _otherPlayer: {fileID: 3600657937873368025}
-  _HostPlayer: {fileID: 8907232818876884732}
-  _lButtonReady: {fileID: 5140824657214460891}
-  _lRoleOption: {fileID: 3801926997658713897}
-  _lRoleSelected: {fileID: 5969207887148946743}
-  _oReady: {fileID: 5507608937689745665}
-  _oRoleSelected: {fileID: 4153986073799237291}
+  isReady: 0
+  parentPlayer: {fileID: 2660638929791481657}
+  localPlayer: {fileID: 3103157500097519247}
+  otherPlayer: {fileID: 3600657937873368025}
+  HostPlayer: {fileID: 8907232818876884732}
+  lButtonReady: {fileID: 5140824657214460891}
+  lRoleOption: {fileID: 3801926997658713897}
+  lRoleSelected: {fileID: 5969207887148946743}
+  oReady: {fileID: 5507608937689745665}
+  oRoleSelected: {fileID: 4153986073799237291}
 --- !u!1001 &3188210309070348211
 PrefabInstance:
   m_ObjectHideFlags: 0

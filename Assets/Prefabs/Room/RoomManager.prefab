@@ -61,10 +61,13 @@ MonoBehaviour:
     type: 3}
   autoCreatePlayer: 1
   playerSpawnMethod: 0
-  spawnPrefabs: []
+  spawnPrefabs:
+  - {fileID: 4939520246062134239, guid: 2f155789d96b37e4dbc9e2b220812c30, type: 3}
+  - {fileID: 4939520246062134239, guid: 190c65ca49dff9d4b904713a7c996eef, type: 3}
+  - {fileID: 4939520246062134239, guid: 09efe7fcb663f6e42a32ee4c1083a399, type: 3}
   timeInterpolationGui: 0
   showRoomGUI: 0
-  minPlayers: 1
+  minPlayers: 2
   roomPlayerPrefab: {fileID: 3750222991075941524, guid: 684b653b6db91d04ab9e4c7a0729be58,
     type: 3}
   RoomScene: Assets/Scenes/LobbyScene.unity
@@ -72,6 +75,16 @@ MonoBehaviour:
   _allPlayersReady: 1
   roomSlots: []
   clientIndex: 0
+  playerPrefabs:
+  - prefab: {fileID: 4939520246062134239, guid: 2f155789d96b37e4dbc9e2b220812c30,
+      type: 3}
+    role: 0
+  - prefab: {fileID: 4939520246062134239, guid: 09efe7fcb663f6e42a32ee4c1083a399,
+      type: 3}
+    role: 1
+  - prefab: {fileID: 4939520246062134239, guid: 190c65ca49dff9d4b904713a7c996eef,
+      type: 3}
+    role: 2
 --- !u!114 &8635409073656960855
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -1,5 +1,4 @@
-﻿using System;
-using Mirror;
+﻿using Mirror;
 using Player.Information;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -99,7 +98,7 @@ namespace Player.Behaviour.Escapist
             base.Start();
             if (isLocalPlayer || isClient)
             {
-                actualRole = PlayerRole.Phantom;
+                CmdSetRole(PlayerRole.Phantom);
                 escapistController = new EscapistController();
                 escapistController.Escapist.Enable();
                 BindTriggers();

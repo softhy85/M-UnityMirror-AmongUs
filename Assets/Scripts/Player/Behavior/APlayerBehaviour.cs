@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Mirror;
 using Player.Information;
 using UnityEngine;
-using Player.Network;
 
 namespace Player.Behaviour
 {
@@ -15,8 +14,13 @@ namespace Player.Behaviour
         public NetworkAnimator networkAnimator;
         public Animator animator;
     }
+
     public class APlayerBehaviour : NetworkBehaviour
     {
+
+        [SyncVar] protected PlayerRole actualRole;
+        [SyncVar] protected Vector3 cameraRelative;
+
         protected Vector2 inputVector = new Vector2(0, 0);
 
         [SerializeField] protected List<body> bodies;
@@ -28,13 +32,9 @@ namespace Player.Behaviour
 
         [field: SerializeField] protected Camera camera;
 
-        [SyncVar] protected Vector3 cameraRelative;
-
         protected Camera mainCamera;
 
         protected Color? defaultColor = null;
-
-        protected PlayerRole actualRole;
 
 
         #region Server
@@ -48,7 +48,11 @@ namespace Player.Behaviour
 
         #region Command
 
-        
+        [Command]
+        protected void CmdSetRole(PlayerRole newRole) {
+            actualRole = newRole;
+        }
+
         [Command]
         public void CmdMove(Vector3 movementVector, Vector3 targetVector, float actualSpeed)
         {
@@ -158,16 +162,8 @@ namespace Player.Behaviour
 
         #endregion
 
+
         #region Other
-        protected virtual void Update()
-        {
-            if (!camera) return;
-            if (isLocalPlayer && !camera.gameObject.activeSelf)
-            {
-                ActivateCamera();
-            } else if (camera.gameObject.activeSelf)
-                DesactivateCamera();
-        }
 
         public virtual void Start()
         {
@@ -179,6 +175,16 @@ namespace Player.Behaviour
                 cameraRelative = camera.transform.position;
             }
         }
+
+        protected virtual void Update()
+        {
+            if (!camera) return;
+            if (isLocalPlayer && !camera.gameObject.activeSelf)
+                ActivateCamera();
+            else if (!isLocalPlayer && camera.gameObject.activeSelf)
+                DesactivateCamera();
+        }
+
 
         public PlayerRole GetRole()
         {
