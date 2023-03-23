@@ -38,52 +38,6 @@ namespace Player.Room
         [SerializeField] private Image _oReady;
         [SerializeField] private TMP_Text _oRoleSelected;
 
-        public void Initiate()
-        {
-            _parentPlayer.transform.SetParent(_playerListCanvas.transform);
-            if (isLocalPlayer) {
-                _localPlayer.SetActive(true);
-                List<string> playerRoles = Enum.GetNames(typeof(PlayerRole)).ToList();
-                _lRoleOption.ClearOptions();
-                _lRoleOption.AddOptions(playerRoles);
-                _lRoleOption.SetValueWithoutNotify(0);
-                if (_lButtonReady != null)
-                    if (_lButtonReady.TryGetComponent<Image>(out var button))
-                        button.color = _ready ? Color.green : Color.red;
-            }
-            else
-            {
-                _otherPlayer.SetActive(true);
-                _oRoleSelected.text = _role.ToString();
-                if (_oReady != null)
-                    _oReady.color = _ready ? Color.green : Color.red;
-
-            }
-            if (_isHost)
-            {
-                _HostPlayer.gameObject.SetActive(true);
-            }
-        }
-
-        private void Update()
-        {
-            if (!_initialize)
-            {
-                var temp = GameObject.FindGameObjectsWithTag("RoomListCanvas");
-                if (temp.Length == 1)
-                {
-                    _playerListCanvas = temp[0];
-                    Initiate();
-                    _initialize = true;
-                }
-            }
-        }
-
-        private void OnDestroy()
-        {
-            Destroy(_parentPlayer);
-        }
-
         #region Server
 
         [Server]
@@ -194,6 +148,56 @@ namespace Player.Room
                     _oReady.color = ready ? Color.green : Color.red;
             }
         }
+        #endregion
+
+        #region Other
+
+        public void Initiate()
+        {
+            _parentPlayer.transform.SetParent(_playerListCanvas.transform);
+            if (isLocalPlayer) {
+                _localPlayer.SetActive(true);
+                List<string> playerRoles = Enum.GetNames(typeof(PlayerRole)).ToList();
+                _lRoleOption.ClearOptions();
+                _lRoleOption.AddOptions(playerRoles);
+                _lRoleOption.SetValueWithoutNotify(0);
+                if (_lButtonReady != null)
+                    if (_lButtonReady.TryGetComponent<Image>(out var button))
+                        button.color = _ready ? Color.green : Color.red;
+            }
+            else
+            {
+                _otherPlayer.SetActive(true);
+                _oRoleSelected.text = _role.ToString();
+                if (_oReady != null)
+                    _oReady.color = _ready ? Color.green : Color.red;
+
+            }
+            if (_isHost)
+            {
+                _HostPlayer.gameObject.SetActive(true);
+            }
+        }
+
+        public override void OnClientEnterRoom()
+        {
+            if (!_initialize)
+            {
+                var temp = GameObject.FindGameObjectsWithTag("RoomListCanvas");
+                if (temp.Length == 1)
+                {
+                    _playerListCanvas = temp[0];
+                    Initiate();
+                    _initialize = true;
+                }
+            }
+        }
+
+        private void OnDestroy()
+        {
+            Destroy(_parentPlayer);
+        }
+
         #endregion
     }
 }
