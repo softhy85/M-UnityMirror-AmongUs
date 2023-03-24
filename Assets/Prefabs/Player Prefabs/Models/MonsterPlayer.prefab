@@ -3337,7 +3337,7 @@ MonoBehaviour:
     animator: {fileID: 4338009133667455644}
   moveSpeed: 55
   rotateSpeed: 15
-  camera: {fileID: 7735973357488474930}
+  actCamera: {fileID: 7735973357488474930}
   sprintSpeed: 75
   testMonster: 0
   testColor: {r: 0, g: 0, b: 0, a: 0}

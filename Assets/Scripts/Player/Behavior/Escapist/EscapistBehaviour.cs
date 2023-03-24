@@ -77,7 +77,7 @@ namespace Player.Behaviour.Escapist
         private void SetSlimeSkin(int slime, int hat = 0, Color? color = null)
         {
             int[] slimeType = new int[3] { 0, 6, 7 };
-            
+
             var temp = bodies[actualBody].gameObject.transform.position;
             bodies[actualBody].gameObject.SetActive(false);
             bodies[actualBody].material.color = defaultColor ??
@@ -118,7 +118,7 @@ namespace Player.Behaviour.Escapist
             base.Start();
             if (isLocalPlayer || isClient)
             {
-                actualRole = PlayerRole.Escapist;
+                CmdSetRole(PlayerRole.Escapist);
                 escapistController = new EscapistController();
                 escapistController.Escapist.Enable();
                 BindTriggers();

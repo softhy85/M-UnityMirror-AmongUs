@@ -17,7 +17,7 @@ namespace Player.Behaviour.Escapist
 
         #region Command
 
-        
+
 
         #endregion
 
@@ -98,7 +98,7 @@ namespace Player.Behaviour.Escapist
             base.Start();
             if (isLocalPlayer || isClient)
             {
-                actualRole = PlayerRole.Phantom;
+                CmdSetRole(PlayerRole.Phantom);
                 escapistController = new EscapistController();
                 escapistController.Escapist.Enable();
                 BindTriggers();

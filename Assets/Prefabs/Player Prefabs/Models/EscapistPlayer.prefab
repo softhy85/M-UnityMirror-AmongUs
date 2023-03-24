@@ -3792,7 +3792,7 @@ MonoBehaviour:
     animator: {fileID: 6974850855680777175}
   moveSpeed: 65
   rotateSpeed: 15
-  camera: {fileID: 7735973357488474930}
+  actCamera: {fileID: 7735973357488474930}
   isKilled: 0
   testSlime: 0
   testHat: 0

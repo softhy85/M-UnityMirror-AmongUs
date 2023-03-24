@@ -18,7 +18,7 @@ namespace Player.Behaviour
     public class APlayerBehaviour : NetworkBehaviour
     {
 
-        [SyncVar] protected PlayerRole actualRole;
+        [SyncVar] protected PlayerRole actualRole = PlayerRole.Phantom;
         [SyncVar] protected Vector3 cameraRelative;
 
         protected Vector2 inputVector = new Vector2(0, 0);
@@ -32,7 +32,6 @@ namespace Player.Behaviour
 
         [field: SerializeField] protected Camera actCamera;
 
-        protected Camera mainCamera;
 
         protected Color? defaultColor = null;
 
@@ -117,8 +116,6 @@ namespace Player.Behaviour
                     actCamera.gameObject.SetActive(true);
                     // cameraRelative = actCamera.transform.position;
                 }
-                if (mainCamera != null)
-                    mainCamera.gameObject.SetActive(false);
             }
         }
 
@@ -169,10 +166,10 @@ namespace Player.Behaviour
         {
             if (isLocalPlayer)
             {
-                mainCamera = Camera.main;
-                if (actCamera != null)
+                if (actCamera != null) {
                     actCamera.gameObject.SetActive(false);
-                cameraRelative = actCamera.transform.position;
+                    cameraRelative = actCamera.transform.position;
+                }
             }
         }
 

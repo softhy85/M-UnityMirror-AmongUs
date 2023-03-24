@@ -1263,7 +1263,7 @@ MonoBehaviour:
     animator: {fileID: 3735925274375159881}
   moveSpeed: 65
   rotateSpeed: 15
-  camera: {fileID: 7735973357488474930}
+  actCamera: {fileID: 7735973357488474930}
   testHat: 0
   testColor: {r: 0, g: 0, b: 0, a: 0}
 --- !u!1 &4958001782931283319

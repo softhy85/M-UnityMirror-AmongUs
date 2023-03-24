@@ -74,7 +74,7 @@ namespace Player.Behaviour.Monster
 
         #region Client
 
-        
+
         #region triggers
 
         #region triggers bind / unbind
@@ -166,7 +166,7 @@ namespace Player.Behaviour.Monster
         {
             var targetVector = new Vector3(movementVector.x, 0,
                 movementVector.y);
-            var eulerMovementVector = Quaternion.Euler(0, GetComponent<Camera>().gameObject.transform.eulerAngles.y, 0) * targetVector;
+            var eulerMovementVector = Quaternion.Euler(0, actCamera.transform.eulerAngles.y, 0) * targetVector;
             float speed = 0;
             if (inputSprint)
                 speed = sprintSpeed;
@@ -277,7 +277,7 @@ namespace Player.Behaviour.Monster
         {
             base.Start();
             if (isLocalPlayer || isClient) {
-                actualRole = PlayerRole.Monster;
+                CmdSetRole(PlayerRole.Monster);
                 monsterController = new MonsterController();
                 monsterController.Monster.Enable();
                 BindTriggers();

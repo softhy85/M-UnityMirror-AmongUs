@@ -58,7 +58,11 @@ namespace Network {
             {
                 if (playerPrefabs[i].role == role)
                 {
-                    GameObject player = Instantiate(playerPrefabs[i].prefab);
+                    Transform startPos = GetStartPosition();
+                    GameObject player = startPos != null
+                        ? Instantiate(playerPrefabs[i].prefab, startPos.position, startPos.rotation)
+                        : Instantiate(playerPrefabs[i].prefab, Vector3.zero, Quaternion.identity);
+                    player.name = $"{playerPrefabs[i].role.ToString()} [connId={conn.connectionId}]";
                     return (player);
                 }
             }
@@ -79,7 +83,7 @@ namespace Network {
                 if (playerPrefabs[i].role == PlayerRole.Phantom)
                 {
                     phantomObj = Instantiate(playerPrefabs[i].prefab);
-                    phantomObj.name = $"{phantomObj.name} [connId={conn.connectionId}]";
+                    phantomObj.name = $"{PlayerRole.Phantom.ToString()} [connId={conn.connectionId}]";
                     NetworkServer.Spawn(phantomObj);
                 }
             }
@@ -112,7 +116,7 @@ namespace Network {
                             if (playerBehaviour.GetRole() ==
                                 PlayerRole.Escapist)
                             {
-                                EscapistBehaviour escapistBehaviour =
+                                var escapistBehaviour =
                                     (EscapistBehaviour)playerBehaviour;
                                 if (escapistBehaviour.IsKilled())
                                 {
