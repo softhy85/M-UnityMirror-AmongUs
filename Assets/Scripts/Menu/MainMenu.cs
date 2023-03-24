@@ -5,20 +5,17 @@ using UnityEditor.Rendering.LookDev;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class MainMenuActions : MonoBehaviour
+public class MainMenu : MonoBehaviour
 {
-	private enum nav
-	{
-		HOST, JOIN, CURRENT_GAME, OPTIONS, QUIT
-	};
-
 	[Header("Navigation Button")]
 	[SerializeField] private Button PlayNavButton;
-	[SerializeField] private Button OptionNavButton;
+	[SerializeField] private Button SkinNavButton;
+	[SerializeField] private Button SettingsNavButton;
 	[SerializeField] private Button QuitNavButton;
 
-	[Header("Pannels")]
+	[Header("Panels")]
 	[SerializeField] private GameObject multiplayerPannel;
+	[SerializeField] private GameObject skinPannel;
 	[SerializeField] private GameObject settingsPannel;
 
 	#region Trigger
@@ -28,13 +25,15 @@ public class MainMenuActions : MonoBehaviour
 	private void AddListener()
 	{
 		PlayNavButton.onClick.AddListener(OnPlayNavButton);
-		OptionNavButton.onClick.AddListener(OnOptionNavButton);
+		SkinNavButton.onClick.AddListener(OnSkinNavButton);
+		SettingsNavButton.onClick.AddListener(OnSettingsNavButton);
 		QuitNavButton.onClick.AddListener(OnQuitNavButton);
 	}
 	private void RemoveListener()
 	{
 		PlayNavButton.onClick.RemoveAllListeners();
-		OptionNavButton.onClick.RemoveAllListeners();
+		SkinNavButton.onClick.RemoveAllListeners();
+		SettingsNavButton.onClick.RemoveAllListeners();
 		QuitNavButton.onClick.RemoveAllListeners();
 	}
 
@@ -42,22 +41,35 @@ public class MainMenuActions : MonoBehaviour
 
 	private void OnPlayNavButton()
 	{
-		if (!multiplayerPannel.activeSelf)
+		if (!multiplayerPannel.activeSelf && !skinPannel.activeSelf)
 			multiplayerPannel.SetActive(true);
 		else
 		{
 			settingsPannel.SetActive(false);
+			skinPannel.SetActive(false);
 			multiplayerPannel.SetActive(true);
 		}
 	}
 
-	private void OnOptionNavButton()
+	private void OnSkinNavButton()
 	{
-		if (!multiplayerPannel.activeSelf)
+		if (!multiplayerPannel.activeSelf && !settingsPannel.activeSelf)
+			skinPannel.SetActive(true);
+		else
+		{
+			multiplayerPannel.SetActive(false);
+			settingsPannel.SetActive(false);
+			skinPannel.SetActive(true);
+		}
+	}
+	private void OnSettingsNavButton()
+	{
+		if (!multiplayerPannel.activeSelf && !skinPannel.activeSelf)
 			settingsPannel.SetActive(true);
 		else
 		{
 			multiplayerPannel.SetActive(false);
+			skinPannel.SetActive(false);
 			settingsPannel.SetActive(true);
 		}
 	}

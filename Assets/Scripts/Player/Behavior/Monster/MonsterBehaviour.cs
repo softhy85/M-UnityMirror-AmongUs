@@ -166,7 +166,7 @@ namespace Player.Behaviour.Monster
         {
             var targetVector = new Vector3(movementVector.x, 0,
                 movementVector.y);
-            var eulerMovementVector = Quaternion.Euler(0, camera.gameObject.transform.eulerAngles.y, 0) * targetVector;
+            var eulerMovementVector = Quaternion.Euler(0, GetComponent<Camera>().gameObject.transform.eulerAngles.y, 0) * targetVector;
             float speed = 0;
             if (inputSprint)
                 speed = sprintSpeed;

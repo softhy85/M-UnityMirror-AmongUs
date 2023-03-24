@@ -358,5 +358,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: LobbyCanvas
       objectReference: {fileID: 0}
+    - target: {fileID: 7997727817641992338, guid: 5e66439a5633337459705316a451bb85,
+        type: 3}
+      propertyPath: sceneId
+      value: 2003997532
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5e66439a5633337459705316a451bb85, type: 3}

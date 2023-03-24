@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -6,18 +5,24 @@ using UnityEngine.Audio;
 using System.Linq;
 using Player.Information;
 using TMPro;
-using Unity.VisualScripting;
 
 
 public class SettingsMenu : MonoBehaviour
 {
+    [Header("Audio")]
     [SerializeField] private AudioMixer audioMixer;
+
+    [Header("UI Inputs")]
     [SerializeField] private TMP_Dropdown resolutionDropdown;
     [SerializeField] private Toggle fullScreenToggle;
     [SerializeField] private Slider volumeSlider;
-    [SerializeField] private Button closePannel;
-    [SerializeField] private GameObject settingsWindow;
+    [SerializeField] private TMP_InputField pseudoInput;
+    [SerializeField] private Button closeButton;
 
+    [Header("Panel")]
+    [SerializeField] private GameObject settingsPanel;
+
+    [Header("Player")]
     [SerializeField] private PlayerInfos playerInfos;
 
     private Resolution[] resolutions;
@@ -30,7 +35,8 @@ public class SettingsMenu : MonoBehaviour
         resolutionDropdown.onValueChanged.AddListener(OnResolutionDropdown);
         volumeSlider.onValueChanged.AddListener(OnVolumeSlider);
         fullScreenToggle.onValueChanged.AddListener(OnFullScreenToggle);
-        closePannel.onClick.AddListener(OnClosePannel);
+        pseudoInput.onValueChanged.AddListener(OnPseudoInput);
+        closeButton.onClick.AddListener(OncloseButton);
     }
 
     private void RemoveListener()
@@ -38,7 +44,8 @@ public class SettingsMenu : MonoBehaviour
         resolutionDropdown.onValueChanged.RemoveAllListeners();
         volumeSlider.onValueChanged.RemoveAllListeners();
         fullScreenToggle.onValueChanged.RemoveAllListeners();
-        closePannel.onClick.RemoveAllListeners();
+        pseudoInput.onValueChanged.RemoveAllListeners();
+        closeButton.onClick.RemoveAllListeners();
     }
 
     #endregion
@@ -63,9 +70,14 @@ public class SettingsMenu : MonoBehaviour
         playerInfos.SetFullscreen(isFullScreen);
     }
 
-    private void OnClosePannel()
+    private void OnPseudoInput(string newPseudo)
     {
-        settingsWindow.SetActive(false);
+        playerInfos.SetPseudo(newPseudo);
+    }
+
+    private void OncloseButton()
+    {
+        settingsPanel.SetActive(false);
     }
 
     #endregion
@@ -73,6 +85,9 @@ public class SettingsMenu : MonoBehaviour
     private void Start()
     {
         InitializeResolution();
+        InitializeFullscreen();
+        InitializeVolumeSlider();
+        InitializePseudoInput();
     }
 
     private void OnEnable()
@@ -87,6 +102,7 @@ public class SettingsMenu : MonoBehaviour
 
     private void OnDestroy()
     {
+        RemoveListener();
         playerInfos.SavePref();
     }
 
@@ -131,5 +147,10 @@ public class SettingsMenu : MonoBehaviour
     {
         fullScreenToggle.isOn = playerInfos.GetFullscreen();
         Screen.fullScreen = fullScreenToggle.isOn;
+    }
+
+    private void InitializePseudoInput()
+    {
+        pseudoInput.text = playerInfos.GetPseudo();
     }
 }

@@ -11,10 +11,9 @@ GameObject:
   - component: {fileID: 1154959781057963181}
   - component: {fileID: 3499716004225189254}
   - component: {fileID: 8635409073656960855}
-  - component: {fileID: 1957652991}
   m_Layer: 0
   m_Name: RoomManager
-  m_TagString: Untagged
+  m_TagString: RoomManager
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -75,6 +74,9 @@ MonoBehaviour:
   _allPlayersReady: 1
   roomSlots: []
   clientIndex: 0
+  roomPrivate: 0
+  roomName: roomName
+  roomPassword: 
   playerPrefabs:
   - prefab: {fileID: 4939520246062134239, guid: 2f155789d96b37e4dbc9e2b220812c30,
       type: 3}
@@ -112,17 +114,3 @@ MonoBehaviour:
   debugLog: 0
   statisticsGUI: 0
   statisticsLog: 0
---- !u!114 &1957652991
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9106053483212660283}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6442dc8070ceb41f094e44de0bf87274, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  offsetX: 0
-  offsetY: 0

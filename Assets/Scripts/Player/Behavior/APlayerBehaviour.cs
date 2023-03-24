@@ -30,7 +30,7 @@ namespace Player.Behaviour
 
         [field: SerializeField] protected float rotateSpeed;
 
-        [field: SerializeField] protected Camera camera;
+        [field: SerializeField] protected Camera actCamera;
 
         protected Camera mainCamera;
 
@@ -82,7 +82,7 @@ namespace Player.Behaviour
         {
             var targetVector = new Vector3(movementVector.x, 0,
                 movementVector.y);
-            var eulerMovementVector = Quaternion.Euler(0, camera.gameObject.transform.eulerAngles.y, 0) * targetVector;
+            var eulerMovementVector = Quaternion.Euler(0, actCamera.gameObject.transform.eulerAngles.y, 0) * targetVector;
             var speed = moveSpeed;
             var actualVecSpeed = movementVector * speed;
             var actualSpeed = Mathf.Sqrt(actualVecSpeed.x * actualVecSpeed.x +
@@ -97,7 +97,7 @@ namespace Player.Behaviour
             if (bodies[actualBody].animator.enabled)
                 bodies[actualBody].animator.SetFloat("speed", actualSpeed);
             bodies[actualBody].gameObject.transform.position = targetPosition;
-            camera.transform.position = targetPosition + cameraRelative;
+            actCamera.transform.position = targetPosition + cameraRelative;
         }
 
         [Client]
@@ -113,9 +113,9 @@ namespace Player.Behaviour
         public void ActivateCamera()
         {
             if (isLocalPlayer) {
-                if (camera != null) {
-                    camera.gameObject.SetActive(true);
-                    // cameraRelative = camera.transform.position;
+                if (actCamera != null) {
+                    actCamera.gameObject.SetActive(true);
+                    // cameraRelative = actCamera.transform.position;
                 }
                 if (mainCamera != null)
                     mainCamera.gameObject.SetActive(false);
@@ -125,8 +125,8 @@ namespace Player.Behaviour
         [Client]
         private void DesactivateCamera()
         {
-            if (camera != null)
-                camera.gameObject.SetActive(false);
+            if (actCamera != null)
+                actCamera.gameObject.SetActive(false);
         }
 
         #endregion
@@ -170,18 +170,18 @@ namespace Player.Behaviour
             if (isLocalPlayer)
             {
                 mainCamera = Camera.main;
-                if (camera != null)
-                    camera.gameObject.SetActive(false);
-                cameraRelative = camera.transform.position;
+                if (actCamera != null)
+                    actCamera.gameObject.SetActive(false);
+                cameraRelative = actCamera.transform.position;
             }
         }
 
         protected virtual void Update()
         {
-            if (!camera) return;
-            if (isLocalPlayer && !camera.gameObject.activeSelf)
+            if (!actCamera) return;
+            if (isLocalPlayer && !actCamera.gameObject.activeSelf)
                 ActivateCamera();
-            else if (!isLocalPlayer && camera.gameObject.activeSelf)
+            else if (!isLocalPlayer && actCamera.gameObject.activeSelf)
                 DesactivateCamera();
         }
 

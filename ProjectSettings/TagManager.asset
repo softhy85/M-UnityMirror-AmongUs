@@ -9,6 +9,7 @@ TagManager:
   - RoomCanvas
   - RoomListCanvas
   - PlayerInfos
+  - RoomManager
   layers:
   - Default
   - TransparentFX

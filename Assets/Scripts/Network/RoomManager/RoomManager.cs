@@ -1,4 +1,6 @@
-﻿using JetBrains.Annotations;
+﻿using System.Linq;
+using System.Net;
+using JetBrains.Annotations;
 using Mirror;
 using Player.Behaviour;
 using Player.Behaviour.Escapist;
@@ -12,9 +14,21 @@ namespace Network {
     public class RoomManager : NetworkRoomManager
     {
         private bool host = false;
-        [Header("Game")]
-        public PlayerPrefab[] playerPrefabs;
+        [Header("Room")]
+        [SerializeField] private bool roomPrivate = false;
+        [SerializeField] private string roomName = "roomName";
+        [SerializeField] private string roomPassword = "";
 
+        [Header("Game")]
+        [SerializeField] private PlayerPrefab[] playerPrefabs;
+
+        private string GetLocalIPv4()
+        {
+            return Dns.GetHostEntry(Dns.GetHostName())
+                .AddressList.First(
+                    f => f.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+                .ToString();
+        }
 
         public override void OnServerAddPlayer(NetworkConnectionToClient conn)
         {
