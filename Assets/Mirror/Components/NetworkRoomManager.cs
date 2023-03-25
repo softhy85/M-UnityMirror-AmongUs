@@ -84,7 +84,6 @@ namespace Mirror
                 if (wasReady != nowReady)
                 {
                     _allPlayersReady = value;
-
                     if (nowReady)
                     {
                         OnRoomServerPlayersReady();
@@ -132,7 +131,6 @@ namespace Mirror
                         ReadyPlayers++;
                 }
             }
-
             if (CurrentPlayers == ReadyPlayers)
                 CheckReadyToBegin();
             else
@@ -159,7 +157,7 @@ namespace Mirror
             }
         }
 
-        void SceneLoadedForPlayer(NetworkConnectionToClient conn, GameObject roomPlayer)
+        private void  SceneLoadedForPlayer(NetworkConnectionToClient conn, GameObject roomPlayer)
         {
             Debug.Log($"NetworkRoom SceneLoadedForPlayer scene: {SceneManager.GetActiveScene().path} {conn}");
 

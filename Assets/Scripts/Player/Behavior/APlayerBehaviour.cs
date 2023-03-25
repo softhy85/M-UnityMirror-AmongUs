@@ -1,113 +1,240 @@
 ﻿using System;
+using System.Collections.Generic;
+using Mirror;
+using Player.Behaviour.Escapist;
+using Player.Behaviour.Monster;
+using Player.Information;
 using UnityEngine;
-using Player.Controller;
-using Player.Network;
 
 namespace Player.Behaviour
 {
-    public class APlayerBehaviour : MonoBehaviour, IPlayerBehaviour
+    [Serializable]
+    public struct body
     {
-        #region imple player network
-         protected PlayerNetwork _playerNetwork;
-         public PlayerNetwork PlayerNetwork
-        { get => _playerNetwork; set => _playerNetwork = value; }
-        #endregion
-        #region imple body
-        [field: SerializeField] protected GameObject _body;
+        public GameObject gameObject;
+        public Material material;
+        public NetworkAnimator networkAnimator;
+        public Animator animator;
+    }
 
-        public GameObject Body
-        { get => _body; set => _body = value; }
-        #endregion
-        #region imple controller
+    public class APlayerBehaviour : NetworkBehaviour
+    {
 
-        [field: SerializeField] protected APlayerController _controller;
-        public APlayerController Controller 
-        { get => _controller; set => _controller = value; }
-        #endregion
-        #region imple moveSpeed
+        [SyncVar] protected PlayerRole actualRole = PlayerRole.Phantom;
+        [SyncVar] protected Vector3 cameraRelative;
 
-        [field: SerializeField] protected float _moveSpeed;
-        public float MoveSpeed 
-        { get => _moveSpeed; set => _moveSpeed = value; }
-        #endregion
-        #region imple rotateSpeed
+        protected Vector2 inputVector = new Vector2(0, 0);
 
-        [field: SerializeField] protected float _rotateSpeed;
-        public float RotateSpeed
-        { get => _rotateSpeed; set => _rotateSpeed = value; }
-        #endregion
-        #region imple camera relative
+        [SerializeField] protected List<body> bodies;
 
-        protected Vector3 _cameraRelative;
-        public Vector3 CameraRelative
-        { get => _cameraRelative; set => _cameraRelative = value; }
-        #endregion
-        #region imple camera
+        protected int actualBody = 0;
+        [SerializeField] protected float moveSpeed;
 
-        [field: SerializeField] protected Camera _camera;
-        public Camera Camera
-        { get => _camera; set => _camera = value; }
-        #endregion
-        #region imple main camera
+        [field: SerializeField] protected float rotateSpeed;
 
-        protected Camera _mainCamera;
-        public Camera MainCamera 
-        { get => _mainCamera; set => _mainCamera = value; }
-        #endregion
+        [field: SerializeField] protected Camera actCamera;
 
-        protected void Awake()
+        protected bool reloaded = false;
+
+        protected Color? defaultColor = null;
+        protected PlayerInfos playerInfos;
+
+        #region Server
+
+
+        [Server]
+        protected virtual void OnDestroy()
         {
-            _playerNetwork = this.gameObject.transform.parent
-                .GetComponent<PlayerNetwork>();
-            _mainCamera = Camera.main;
-            if (_camera != null)
-                _camera.gameObject.SetActive(false);
-            _cameraRelative = _camera.transform.position;
+            DesactivateCamera();
+        }
+
+        #region Command
+
+        [Command]
+        protected void CmdSetRole(PlayerRole newRole) {
+            actualRole = newRole;
+        }
+
+        [Command]
+        public void CmdMove(Vector3 movementVector, Vector3 targetVector, float actualSpeed)
+        {
+            RpcMove(movementVector, targetVector, actualSpeed);
+        }
+
+        [Command]
+        public void CmdStopMoving()
+        {
+            RpcStopMoving();
+        }
+
+        [Command]
+        public void CmdActivateCamera()
+        {
+            RpcActivateCamera();
+        }
+
+        [Command]
+        protected void CmdReloadPlayers()
+        {
+            reloaded = true;
+            foreach(var (key, cliConn) in NetworkServer.connections)
+            {
+                if (cliConn.identity.TryGetComponent<APlayerBehaviour>(out var playerBehaviour))
+                {
+                    playerBehaviour.CmdActivateCamera();
+                    var actRole = playerBehaviour.GetRole();
+                    switch (actRole)
+                    {
+                        case PlayerRole.Escapist:
+                            var escapistBehaviour =
+                                (EscapistBehaviour)playerBehaviour;
+                            escapistBehaviour.CmdReloadSlime();
+                            break;
+                        case PlayerRole.Phantom:
+                            var phantomBehaviour =
+                                (PhantomBehaviour)playerBehaviour;
+                            phantomBehaviour.CmdReloadPhantom();
+                            break;
+                        case PlayerRole.Monster:
+                            var monsterBehaviour =
+                                (MonsterBehaviour)playerBehaviour;
+                            monsterBehaviour.CmdReloadMonster();
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+        }
+
+        #endregion
+
+        #endregion
+
+        #region Client
+
+        [Client]
+        protected virtual void AskToMove(Vector3 movementVector)
+        {
+            var targetVector = new Vector3(movementVector.x, 0,
+                movementVector.y);
+            var eulerMovementVector = Quaternion.Euler(0, actCamera.gameObject.transform.eulerAngles.y, 0) * targetVector;
+            var speed = moveSpeed;
+            var actualVecSpeed = movementVector * speed;
+            var actualSpeed = Mathf.Sqrt(actualVecSpeed.x * actualVecSpeed.x +
+                                         actualVecSpeed.y * actualVecSpeed.y);
+            var targetPosition = bodies[actualBody].gameObject.transform.position + eulerMovementVector * speed * Time.deltaTime;
+            CmdMove(eulerMovementVector, targetPosition, actualSpeed);
+        }
+
+        [Client]
+        private void MoveTowardTarget(Vector3 targetPosition, float actualSpeed)
+        {
+            if (bodies[actualBody].animator.enabled)
+                bodies[actualBody].animator.SetFloat("speed", actualSpeed);
+            bodies[actualBody].gameObject.transform.position = targetPosition;
+            actCamera.transform.position = targetPosition + cameraRelative;
+        }
+
+        [Client]
+        private void RotateTowardMovementVector(Vector3 movementVector)
+        {
+            if (movementVector.magnitude == 0) { return; }
+            var rotation = Quaternion.LookRotation(movementVector);
+            bodies[actualBody].gameObject.transform.rotation = Quaternion.RotateTowards(bodies[actualBody].gameObject.transform.rotation,
+                rotation, rotateSpeed);
+        }
+
+        [Client]
+        public void ActivateCamera()
+        {
+            if (isLocalPlayer) {
+                if (actCamera != null) {
+                    actCamera.gameObject.SetActive(true);
+                    // cameraRelative = actCamera.transform.position;
+                }
+            }
+        }
+
+        [Client]
+        private void DesactivateCamera()
+        {
+            if (actCamera != null)
+                actCamera.gameObject.SetActive(false);
+        }
+
+        #endregion
+
+        #region ClientRpc
+
+        [ClientRpc]
+        protected void RpcMove(Vector3 movementVector, Vector3 targetVector, float actualSpeed)
+        {
+            MoveTowardTarget(targetVector, actualSpeed);
+            RotateTowardMovementVector(movementVector);
+        }
+
+        [ClientRpc]
+        protected void RpcStopMoving()
+        {
+            if (bodies[actualBody].animator.enabled)
+                bodies[actualBody].animator.SetFloat("speed", 0);
+        }
+
+        [ClientRpc]
+        protected void RpcActivateCamera()
+        {
+            if (isLocalPlayer) {
+                ActivateCamera();
+            } else
+                DesactivateCamera();
+        }
+
+        #endregion
+
+
+        #region Other
+
+
+        public override void OnStartAuthority()
+        {
+            base.OnStartAuthority();
+            if (isLocalPlayer)
+            {
+                if (actCamera != null) {
+                    actCamera.gameObject.SetActive(false);
+                    cameraRelative = actCamera.transform.position;
+                }
+
+                var playerInfosObj =
+                    GameObject.FindGameObjectsWithTag("PlayerInfos");
+                if (playerInfosObj.Length == 1)
+                {
+                    if (playerInfosObj[0]
+                        .TryGetComponent<PlayerInfos>(out var actPlayerInfos))
+                        playerInfos = actPlayerInfos;
+                }
+
+            }
         }
 
         protected virtual void Update()
         {
-            if (_controller._inputVector.magnitude != 0)
-            {
-                AskToMove(_controller._inputVector);
-            }
-        }
-        private void AskToMove(Vector3 movementVector) {
-            var targetVector = new Vector3(movementVector.x, 0,
-                movementVector.y);
-            var eulerMovementVector = Quaternion.Euler(0, _camera.gameObject.transform.eulerAngles.y, 0) * targetVector;
-            var speed = _moveSpeed * Time.deltaTime;
-            var targetPosition = _body.transform.position + movementVector * speed;
-            _playerNetwork.CmdMove(eulerMovementVector);
+            if (!actCamera) return;
+            if (isLocalPlayer && !reloaded)
+                CmdReloadPlayers();
+            if (isLocalPlayer && !actCamera.gameObject.activeSelf)
+                ActivateCamera();
+            else if (!isLocalPlayer && actCamera.gameObject.activeSelf)
+                DesactivateCamera();
         }
 
-        public void ActivateCamera()
+
+        public PlayerRole GetRole()
         {
-            if (_camera != null)
-                _camera.gameObject.SetActive(true);
-            if (_mainCamera != null)
-                _mainCamera.gameObject.SetActive(false);
+            return actualRole;
         }
 
-        public void DesactivateCamera()
-        {
-            if (_mainCamera != null)
-                _mainCamera.gameObject.SetActive(true);
-        }
-        public void MoveTowardTarget(Vector3 movementVector)
-        {
-            var speed = _moveSpeed * Time.deltaTime;
-            var targetPosition = _body.transform.position + movementVector * speed;
-            _body.transform.position = targetPosition;
-            _camera.transform.position = targetPosition + _cameraRelative;
-        }
-
-        public void RotateTowardMovementVector(Vector3 movementVector)
-        {
-            if (movementVector.magnitude == 0) { return; }
-            var rotation = Quaternion.LookRotation(movementVector);
-            _body.transform.rotation = Quaternion.RotateTowards(_body.transform.rotation,
-                rotation, _rotateSpeed);
-        }
+        #endregion
     }
 }
