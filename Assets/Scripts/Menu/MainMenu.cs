@@ -8,13 +8,14 @@ namespace Menu
 		[Header("Navigation Button")] [SerializeField]
 		private Button PlayNavButton;
 
+		[SerializeField] private Button InputNavButton;
 		[SerializeField] private Button SkinNavButton;
 		[SerializeField] private Button SettingsNavButton;
 		[SerializeField] private Button QuitNavButton;
 
 		[Header("Panels")] [SerializeField]
 		private GameObject multiplayerPannel;
-
+		[SerializeField] private GameObject inputsPannel;
 		[SerializeField] private GameObject skinPannel;
 		[SerializeField] private GameObject settingsPannel;
 
@@ -28,6 +29,7 @@ namespace Menu
 		private void AddListener()
 		{
 			PlayNavButton.onClick.AddListener(OnPlayNavButton);
+			InputNavButton.onClick.AddListener(OnInputNavButton);
 			SkinNavButton.onClick.AddListener(OnSkinNavButton);
 			SettingsNavButton.onClick.AddListener(OnSettingsNavButton);
 			QuitNavButton.onClick.AddListener(OnQuitNavButton);
@@ -36,6 +38,7 @@ namespace Menu
 		private void RemoveListener()
 		{
 			PlayNavButton.onClick.RemoveAllListeners();
+			InputNavButton.onClick.RemoveAllListeners();
 			SkinNavButton.onClick.RemoveAllListeners();
 			SettingsNavButton.onClick.RemoveAllListeners();
 			QuitNavButton.onClick.RemoveAllListeners();
@@ -45,24 +48,39 @@ namespace Menu
 
 		private void OnPlayNavButton()
 		{
-			if (!multiplayerPannel.activeSelf && !skinPannel.activeSelf)
+			if (!multiplayerPannel.activeSelf && !skinPannel.activeSelf && !inputsPannel.activeSelf)
 				multiplayerPannel.SetActive(true);
 			else
 			{
-				settingsPannel.SetActive(false);
+				inputsPannel.SetActive(false);
 				skinPannel.SetActive(false);
+				settingsPannel.SetActive(false);
 				multiplayerPannel.SetActive(true);
+			}
+		}
+
+		private void OnInputNavButton()
+		{
+			if (!multiplayerPannel.activeSelf && !skinPannel.activeSelf && !settingsPannel.activeSelf)
+				inputsPannel.SetActive(true);
+			else
+			{
+				skinPannel.SetActive(false);
+				settingsPannel.SetActive(false);
+				multiplayerPannel.SetActive(false);
+				inputsPannel.SetActive(true);
 			}
 		}
 
 		private void OnSkinNavButton()
 		{
-			if (!multiplayerPannel.activeSelf && !settingsPannel.activeSelf)
+			if (!multiplayerPannel.activeSelf && !settingsPannel.activeSelf && !inputsPannel.activeSelf)
 				skinPannel.SetActive(true);
 			else
 			{
-				multiplayerPannel.SetActive(false);
+				inputsPannel.SetActive(false);
 				settingsPannel.SetActive(false);
+				multiplayerPannel.SetActive(false);
 				skinPannel.SetActive(true);
 			}
 		}
