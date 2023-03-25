@@ -6,7 +6,7 @@ namespace Menu
 {
     public class AudioManager : MonoBehaviour
     {
-        private AudioManager instance;
+        private static AudioManager instance;
 
         [SerializeField] private Music[] musics;
 
@@ -61,7 +61,7 @@ namespace Menu
             }
             foreach (var music in musics)
             {
-                if (music.musicType == musicType)
+                if (music.musicType == musicType && music.audioSource)
                 {
                     music.audioSource.Play();
                     actualMusic = musicType;
@@ -73,7 +73,7 @@ namespace Menu
         {
             foreach (var music in musics)
             {
-                if (music.musicType == actualMusic)
+                if (music.musicType == actualMusic && music.audioSource)
                 {
                     music.audioSource.Stop();
                     actualMusic = MusicType.NoMusic;
@@ -102,12 +102,14 @@ namespace Menu
         {
             foreach (var sound in sounds)
             {
-                if (sound.soundType == soundType && !sound.audioSource.isPlaying)
+                if (sound.soundType == soundType && sound.audioSource)
                 {
-                    sound.audioSource.pitch =
-                        UnityEngine.Random.Range(sound.pitchMin, sound.pitchMax);
-                    sound.audioSource.Play();
-                    lastSound = soundType;
+                    if (!sound.audioSource.isPlaying) {
+                        sound.audioSource.pitch =
+                            UnityEngine.Random.Range(sound.pitchMin, sound.pitchMax);
+                        sound.audioSource.Play();
+                        lastSound = soundType;
+                    }
                 }
             }
         }

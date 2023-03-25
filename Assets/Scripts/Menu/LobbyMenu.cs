@@ -25,12 +25,14 @@ namespace Menu
         [Client]
         private void AddListener()
         {
+            if (!isLocalPlayer) return;
             disconnectButton.onClick.AddListener(OnDisconnectButton);
         }
 
         [Client]
         private void RemoveListener()
         {
+            if (!isLocalPlayer) return;
             disconnectButton.onClick.RemoveAllListeners();
         }
 
@@ -54,17 +56,10 @@ namespace Menu
             roomManager = (RoomManager)NetworkManager.singleton;
         }
 
-        private void OnEnable()
-        {
-            AddListener();
-        }
-        private void OnDisable()
-        {
-            RemoveListener();
-        }
-
+        [Client]
         private void OnDestroy()
         {
+            if (!isLocalPlayer) return;
             RemoveListener();
         }
 

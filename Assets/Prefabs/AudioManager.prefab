@@ -88,25 +88,25 @@ MonoBehaviour:
   - clip: {fileID: 8300000, guid: ebe0ab00f2bebd94893d7dabea599b9a, type: 3}
     soundType: 0
     volume: 1
-    pitchMin: 0
-    pitchMax: 1
+    pitchMin: 1
+    pitchMax: 1.5
     audioSource: {fileID: 0}
   - clip: {fileID: 8300000, guid: 461937464e995f74d956e98f5302c66e, type: 3}
     soundType: 1
     volume: 1
-    pitchMin: 0
-    pitchMax: 1
+    pitchMin: 1
+    pitchMax: 1.5
     audioSource: {fileID: 0}
   - clip: {fileID: 8300000, guid: 2ff8ed01b28a78e48a11e042473b16bb, type: 3}
     soundType: 2
     volume: 1
-    pitchMin: 0
-    pitchMax: 1
+    pitchMin: 1
+    pitchMax: 1.5
     audioSource: {fileID: 0}
   - clip: {fileID: 8300000, guid: 9113776dffe376345a3e406750bb700b, type: 3}
     soundType: 3
     volume: 1
-    pitchMin: 0
-    pitchMax: 1
+    pitchMin: 1
+    pitchMax: 1.5
     audioSource: {fileID: 0}
   audioMixerGroup: {fileID: 24300002, guid: 89974167760ca2e49bfada09b0979c2d, type: 2}

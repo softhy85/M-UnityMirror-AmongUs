@@ -50,7 +50,6 @@ namespace Network {
         public override GameObject OnRoomServerCreateGamePlayer(
             NetworkConnectionToClient conn, GameObject roomPlayer)
         {
-            Debug.Log("OnRoomServerCreateGamePlayer");
             PlayerRole role = roomPlayer.GetComponent<RoomPlayer>().GetRole();
             GameObject player = null;
             for (int i = 0; i < playerPrefabs.Length; i++)
@@ -84,10 +83,6 @@ namespace Network {
             {
                 NetworkServer.RemovePlayerForConnection(conn, conn.identity.gameObject);
                 NetworkServer.AddPlayerForConnection(conn, phantomObj);
-                if (conn.identity.TryGetComponent<PhantomBehaviour>(out var phantomBehaviour))
-                {
-                    phantomBehaviour.CmdActivateCamera();
-                }
                 escapistBehaviour.CmdDestroy();
             }
         }

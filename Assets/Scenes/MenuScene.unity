@@ -1589,7 +1589,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -84.87601, y: -369}
+  m_AnchoredPosition: {x: -84.87604, y: -369}
   m_SizeDelta: {x: -200, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &136857562
@@ -2833,7 +2833,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -43.000046, y: -19.200005}
+  m_AnchoredPosition: {x: -43.000046, y: -19.200008}
   m_SizeDelta: {x: 61.800003, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &226125275
@@ -5243,7 +5243,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -29.145996, y: -136.23}
+  m_AnchoredPosition: {x: -29.146027, y: -136.23}
   m_SizeDelta: {x: -58.293, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &327778662
@@ -13022,7 +13022,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -32.590027, y: -18.115}
+  m_AnchoredPosition: {x: -32.590057, y: -18.115}
   m_SizeDelta: {x: -92.722, y: 36.229}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1043592186
@@ -15419,7 +15419,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 19.000015, y: -30.700005}
+  m_AnchoredPosition: {x: 19.000015, y: -30.700008}
   m_SizeDelta: {x: 100, y: 15}
   m_Pivot: {x: 0, y: 0}
 --- !u!114 &1257235784
@@ -29143,7 +29143,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -43.000046, y: -19.19999}
+  m_AnchoredPosition: {x: -43.000046, y: -19.199993}
   m_SizeDelta: {x: 61.800003, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &341844595381676569
@@ -30624,7 +30624,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 19.000015, y: -30.69999}
+  m_AnchoredPosition: {x: 19.000015, y: -30.699993}
   m_SizeDelta: {x: 100, y: 15}
   m_Pivot: {x: 0, y: 0}
 --- !u!1 &341844595644455887
@@ -33850,46 +33850,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 463214506341316030, guid: c03d5d6484ff2d8489c103ade15f5c8c,
-        type: 3}
-      propertyPath: sounds.Array.data[0].pitchMax
-      value: 1.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 463214506341316030, guid: c03d5d6484ff2d8489c103ade15f5c8c,
-        type: 3}
-      propertyPath: sounds.Array.data[0].pitchMin
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 463214506341316030, guid: c03d5d6484ff2d8489c103ade15f5c8c,
-        type: 3}
-      propertyPath: sounds.Array.data[1].pitchMax
-      value: 1.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 463214506341316030, guid: c03d5d6484ff2d8489c103ade15f5c8c,
-        type: 3}
-      propertyPath: sounds.Array.data[1].pitchMin
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 463214506341316030, guid: c03d5d6484ff2d8489c103ade15f5c8c,
-        type: 3}
-      propertyPath: sounds.Array.data[2].pitchMax
-      value: 1.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 463214506341316030, guid: c03d5d6484ff2d8489c103ade15f5c8c,
-        type: 3}
-      propertyPath: sounds.Array.data[2].pitchMin
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 463214506341316030, guid: c03d5d6484ff2d8489c103ade15f5c8c,
-        type: 3}
-      propertyPath: sounds.Array.data[3].pitchMax
-      value: 1.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 463214506341316030, guid: c03d5d6484ff2d8489c103ade15f5c8c,
-        type: 3}
-      propertyPath: sounds.Array.data[3].pitchMin
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c03d5d6484ff2d8489c103ade15f5c8c, type: 3}
