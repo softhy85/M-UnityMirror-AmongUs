@@ -230,8 +230,6 @@ namespace Player.Behaviour.Monster
         {
             base.MoveTowardTarget(targetPosition, actualSpeed);
             if (!isLocalPlayer) return;
-            Debug.Log("actualSpeed " + actualSpeed);
-            Debug.Log("sprintSpeed " + sprintSpeed);
             if (actualSpeed < sprintSpeed)
                 audioManager.StartSound(SoundType.MonsterWalk);
             else
@@ -260,7 +258,7 @@ namespace Player.Behaviour.Monster
             isAttacking = true;
             var attackName = "attack" + attackType.ToString();
             if (bodies[actualBody].animator.enabled) {
-                if (!isLocalPlayer)
+                if (isLocalPlayer)
                 {
                     audioManager.StartSound(SoundType.MonsterAttack);
                 }

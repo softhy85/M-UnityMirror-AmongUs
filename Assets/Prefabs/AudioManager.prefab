@@ -91,13 +91,13 @@ MonoBehaviour:
     pitchMin: 0
     pitchMax: 1
     audioSource: {fileID: 0}
-  - clip: {fileID: 8300000, guid: 76d3d4c2ee8adc3458ea2656250e4942, type: 3}
+  - clip: {fileID: 8300000, guid: 461937464e995f74d956e98f5302c66e, type: 3}
     soundType: 1
     volume: 1
     pitchMin: 0
     pitchMax: 1
     audioSource: {fileID: 0}
-  - clip: {fileID: 8300000, guid: 26659a44a95a6d646b0ae384cace2598, type: 3}
+  - clip: {fileID: 8300000, guid: 2ff8ed01b28a78e48a11e042473b16bb, type: 3}
     soundType: 2
     volume: 1
     pitchMin: 0
