@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using Menu;
 using Mirror;
+using Player.Behaviour.Monster;
 using Player.Information;
 using Player.Information.Structure;
 using UnityEngine;
@@ -95,6 +97,63 @@ namespace Player.Behaviour.Escapist
             bodies[actualBody].material.color = color;
         }
 
+        [Client]
+        private int GetNearbyDistanceMonster()
+        {
+            var distanceMonster = -1;
+            var actPos = new Vector2(bodies[actualBody].gameObject.transform.position.x,
+                bodies[actualBody].gameObject.transform.position.y);
+            var monstersObj =
+                GameObject.FindGameObjectsWithTag("PlayerMonster");
+            foreach (var monsterObj in monstersObj)
+            {
+                if (!monsterObj.TryGetComponent<MonsterBehaviour>(
+                        out var monsterBehaviour)) continue;
+                var monsterBody = monsterBehaviour.getActualBody();
+                var monsterPos = new Vector2(monsterBody.transform.position.x, monsterBody.transform.position.y);
+                var actDistanceVec =
+                    new Vector2(Mathf.Abs(monsterPos.x - actPos.x),
+                        Mathf.Abs(monsterPos.y - actPos.y));
+                var actDistance =
+                    Mathf.Sqrt(actDistanceVec.x * actDistanceVec.x +
+                               actDistanceVec.y * actDistanceVec.y);
+                if (distanceMonster > actDistance || distanceMonster == -1)
+                    distanceMonster = (int)Mathf.Round(actDistance);
+            }
+            return distanceMonster;
+        }
+
+        [Client]
+        private void SetMusicMonster()
+        {
+            var distanceMonster = GetNearbyDistanceMonster();
+            var actualMusic = audioManager.GetActualMusic();
+
+            if (distanceMonster == -1) return;
+            if (distanceMonster < 5 && actualMusic != MusicType.EscapistMonsterChasingMusic)
+            {
+                audioManager.StartMusic(MusicType.EscapistMonsterChasingMusic);
+            } else if (distanceMonster is >= 5 and < 10 &&
+                       actualMusic != MusicType.EscapistMonsterNearbyMusic)
+            {
+                audioManager.StartMusic(MusicType.EscapistMonsterNearbyMusic);
+            } else if (distanceMonster is >= 10 and < 20  &&
+                       actualMusic != MusicType.EscapistMonsterMusic)
+            {
+                audioManager.StartMusic(MusicType.EscapistMonsterMusic);
+            } else if (distanceMonster >= 20 && actualMusic != MusicType.EscapistCalmMusic)
+            {
+                audioManager.StartMusic(MusicType.EscapistCalmMusic);
+            }
+        }
+
+        [Client]
+        protected override void MoveTowardTarget(Vector3 targetPosition, float actualSpeed)
+        {
+            base.MoveTowardTarget(targetPosition, actualSpeed);
+            if (!isLocalPlayer) return;
+            audioManager.StartSound(SoundType.SlimeJump);
+        }
         #endregion
 
         #region ClientRpc
@@ -117,6 +176,7 @@ namespace Player.Behaviour.Escapist
                 SetSlimeSkin(color);
             }
         }
+
 
         #endregion
 
@@ -144,10 +204,12 @@ namespace Player.Behaviour.Escapist
             }
         }
 
+
         protected override void Update()
         {
             base.Update();
             if (!isLocalPlayer) return;
+            SetMusicMonster();
             if (inputVector.magnitude != 0)
                 AskToMove(inputVector);
             else

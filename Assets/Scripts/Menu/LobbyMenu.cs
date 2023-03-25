@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.UI;
 
-namespace Player
+namespace Menu
 {
     public class LobbyMenu : NetworkBehaviour
     {

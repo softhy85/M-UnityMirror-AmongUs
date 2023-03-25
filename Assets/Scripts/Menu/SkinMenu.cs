@@ -4,134 +4,144 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class SkinMenu : MonoBehaviour
+namespace Menu
 {
-    [Header("UI Inputs")]
-    [SerializeField] private TMP_Dropdown slimeTypeDropdown;
-    [SerializeField] private TMP_Dropdown slimeHatDropdown;
-    [SerializeField] private FlexibleColorPicker slimeColor;
-    [SerializeField] private TMP_Dropdown monsterTypeDropdown;
-    [SerializeField] private FlexibleColorPicker monsterColor;
-    [SerializeField] private Button closeButton;
-
-    [Header("Panel")]
-    [SerializeField] private GameObject skinPanel;
-
-    [Header("Player")]
-    [SerializeField] private PlayerInfos playerInfos;
-
-    #region Trigger
-
-    #region Add/Remove Trigger
-    private void AddListener()
+    public class SkinMenu : MonoBehaviour
     {
-        slimeTypeDropdown.onValueChanged.AddListener(OnSlimeTypeDropdown);
-        slimeHatDropdown.onValueChanged.AddListener(OnSlimeHatDropdown);
-        slimeColor.onColorChange.AddListener(OnSlimeColor);
+        [Header("UI Inputs")] [SerializeField]
+        private TMP_Dropdown slimeTypeDropdown;
 
-        monsterTypeDropdown.onValueChanged.AddListener(OnMonsterTypeDropdown);
-        monsterColor.onColorChange.AddListener(OnMonsterColor);
-        closeButton.onClick.AddListener(OncloseButton);
-    }
+        [SerializeField] private TMP_Dropdown slimeHatDropdown;
+        [SerializeField] private FlexibleColorPicker slimeColor;
+        [SerializeField] private TMP_Dropdown monsterTypeDropdown;
+        [SerializeField] private FlexibleColorPicker monsterColor;
+        [SerializeField] private Button closeButton;
 
-    private void RemoveListener()
-    {
-        slimeTypeDropdown.onValueChanged.RemoveAllListeners();
-        slimeHatDropdown.onValueChanged.RemoveAllListeners();
+        [Header("Panel")] [SerializeField] private GameObject skinPanel;
 
-        monsterTypeDropdown.onValueChanged.RemoveAllListeners();
-        closeButton.onClick.RemoveAllListeners();
-    }
+        [Header("Player")] [SerializeField] private PlayerInfos playerInfos;
 
-    #endregion
+        #region Trigger
 
-    private void OnSlimeTypeDropdown(int newSlimeType)
-    {
-        playerInfos.SetSlimeType(newSlimeType);
-    }
+        #region Add/Remove Trigger
 
-    private void OnSlimeHatDropdown(int newSlimeHat)
-    {
-        playerInfos.SetSlimeHat(newSlimeHat);
-    }
-
-    private void OnSlimeColor(Color newSlimeColor)
-    {
-        playerInfos.SetSlimeColor(newSlimeColor);
-    }
-
-
-    private void OnMonsterTypeDropdown(int newMonsterType)
-    {
-        playerInfos.SetMonsterType(newMonsterType);
-    }
-
-    private void OnMonsterColor(Color newMonsterColor)
-    {
-        playerInfos.SetMonsterColor(newMonsterColor);
-    }
-
-    private void OncloseButton()
-    {
-        skinPanel.SetActive(false);
-    }
-
-    #endregion
-
-    private void Start()
-    {
-    }
-
-    private void OnEnable()
-    {
-        AddListener();
-        InitializeSlime();
-        InitializeMonster();
-    }
-    private void OnDisable()
-    {
-        RemoveListener();
-        playerInfos.SavePref();
-    }
-
-    private void OnDestroy()
-    {
-        RemoveListener();
-        playerInfos.SavePref();
-    }
-
-    private void InitializeSlime()
-    {
-        var slimeType = new List<string> { "normal slime", "bunny slime", "cat slime" };
-        var slimeHat = new List<string> { "none", "king", "viking", "metal helmet", "leaf", "sprout" };
-        var actualSlimeType = playerInfos.GetSlimeType();
-        var actualSlimeHat = playerInfos.GetSlimeHat();
-        var actualSlimeColor = playerInfos.GetSlimeColor();
-
-        if (slimeTypeDropdown.options.Count == 0) {
-            slimeTypeDropdown.AddOptions(slimeType);
-            slimeTypeDropdown.value = actualSlimeType;
-        }
-
-        if (slimeHatDropdown.options.Count == 0)
+        private void AddListener()
         {
-            slimeHatDropdown.AddOptions(slimeHat);
-            slimeHatDropdown.value = actualSlimeHat;
+            slimeTypeDropdown.onValueChanged.AddListener(OnSlimeTypeDropdown);
+            slimeHatDropdown.onValueChanged.AddListener(OnSlimeHatDropdown);
+            slimeColor.onColorChange.AddListener(OnSlimeColor);
+
+            monsterTypeDropdown.onValueChanged.AddListener(
+                OnMonsterTypeDropdown);
+            monsterColor.onColorChange.AddListener(OnMonsterColor);
+            closeButton.onClick.AddListener(OncloseButton);
         }
-        slimeColor.SetColor(actualSlimeColor);
-    }
 
-    private void InitializeMonster()
-    {
-        var monsterType = new List<string> { "boy", "girl" };
-        var actualMonsterType = playerInfos.GetMonsterType();
-        var actualMonsterColor = playerInfos.GetMonsterColor();
-
-        if (monsterTypeDropdown.options.Count == 0)
+        private void RemoveListener()
         {
-            monsterTypeDropdown.AddOptions(monsterType);
-            monsterTypeDropdown.value = actualMonsterType;
+            slimeTypeDropdown.onValueChanged.RemoveAllListeners();
+            slimeHatDropdown.onValueChanged.RemoveAllListeners();
+
+            monsterTypeDropdown.onValueChanged.RemoveAllListeners();
+            closeButton.onClick.RemoveAllListeners();
         }
-        monsterColor.SetColor(actualMonsterColor);
+
+        #endregion
+
+        private void OnSlimeTypeDropdown(int newSlimeType)
+        {
+            playerInfos.SetSlimeType(newSlimeType);
+        }
+
+        private void OnSlimeHatDropdown(int newSlimeHat)
+        {
+            playerInfos.SetSlimeHat(newSlimeHat);
+        }
+
+        private void OnSlimeColor(Color newSlimeColor)
+        {
+            playerInfos.SetSlimeColor(newSlimeColor);
+        }
+
+
+        private void OnMonsterTypeDropdown(int newMonsterType)
+        {
+            playerInfos.SetMonsterType(newMonsterType);
+        }
+
+        private void OnMonsterColor(Color newMonsterColor)
+        {
+            playerInfos.SetMonsterColor(newMonsterColor);
+        }
+
+        private void OncloseButton()
+        {
+            skinPanel.SetActive(false);
+        }
+
+        #endregion
+
+        private void Start()
+        {
+        }
+
+        private void OnEnable()
+        {
+            AddListener();
+            InitializeSlime();
+            InitializeMonster();
+        }
+
+        private void OnDisable()
+        {
+            RemoveListener();
+            playerInfos.SavePref();
+        }
+
+        private void OnDestroy()
+        {
+            RemoveListener();
+            playerInfos.SavePref();
+        }
+
+        private void InitializeSlime()
+        {
+            var slimeType = new List<string>
+                { "normal slime", "bunny slime", "cat slime" };
+            var slimeHat = new List<string>
+                { "none", "king", "viking", "metal helmet", "leaf", "sprout" };
+            var actualSlimeType = playerInfos.GetSlimeType();
+            var actualSlimeHat = playerInfos.GetSlimeHat();
+            var actualSlimeColor = playerInfos.GetSlimeColor();
+
+            if (slimeTypeDropdown.options.Count == 0)
+            {
+                slimeTypeDropdown.AddOptions(slimeType);
+                slimeTypeDropdown.value = actualSlimeType;
+            }
+
+            if (slimeHatDropdown.options.Count == 0)
+            {
+                slimeHatDropdown.AddOptions(slimeHat);
+                slimeHatDropdown.value = actualSlimeHat;
+            }
+
+            slimeColor.SetColor(actualSlimeColor);
+        }
+
+        private void InitializeMonster()
+        {
+            var monsterType = new List<string> { "boy", "girl" };
+            var actualMonsterType = playerInfos.GetMonsterType();
+            var actualMonsterColor = playerInfos.GetMonsterColor();
+
+            if (monsterTypeDropdown.options.Count == 0)
+            {
+                monsterTypeDropdown.AddOptions(monsterType);
+                monsterTypeDropdown.value = actualMonsterType;
+            }
+
+            monsterColor.SetColor(actualMonsterColor);
+        }
     }
 }

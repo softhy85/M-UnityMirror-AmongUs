@@ -244,7 +244,7 @@ namespace Player.Room
                 Enum.GetNames(typeof(PlayerRole)).ToList();
                 foreach (var newRole in Enum.GetNames(typeof(PlayerRole)).ToList())
                 {
-                    if (newRole != PlayerRole.Phantom.ToString())
+                    if (newRole != PlayerRole.Phantom.ToString() && newRole != PlayerRole.NoRole.ToString())
                         playerRoles.Add(newRole);
                 }
                 lRoleOption.ClearOptions();
