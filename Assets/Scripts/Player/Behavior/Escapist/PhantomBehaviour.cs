@@ -147,17 +147,6 @@ namespace Player.Behaviour.Escapist
                     CmdStopMoving();
             }
         }
-        private void OnEnable()
-        {
-            if (!isLocalPlayer) return;
-            escapistController.Escapist.Enable();
-        }
-
-        private void OnDisable()
-        {
-            if (!isLocalPlayer) return;
-            escapistController.Escapist.Disable();
-        }
 
         protected override void OnDestroy()
         {

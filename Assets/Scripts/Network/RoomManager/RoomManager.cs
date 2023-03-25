@@ -83,10 +83,6 @@ namespace Network {
             {
                 NetworkServer.RemovePlayerForConnection(conn, conn.identity.gameObject);
                 NetworkServer.AddPlayerForConnection(conn, phantomObj);
-                if (conn.identity.TryGetComponent<PhantomBehaviour>(out var phantomBehaviour))
-                {
-                    phantomBehaviour.CmdActivateCamera();
-                }
                 escapistBehaviour.CmdDestroy();
             }
         }

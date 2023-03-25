@@ -334,18 +334,6 @@ namespace Player.Behaviour.Monster
                 CmdStopMoving();
         }
 
-        private void OnEnable()
-        {
-            if (!isLocalPlayer) return;
-            monsterController?.Monster.Enable();
-        }
-
-        private void OnDisable()
-        {
-            if (!isLocalPlayer) return;
-            monsterController?.Monster.Disable();
-        }
-
         protected override void OnDestroy()
         {
             base.OnDestroy();

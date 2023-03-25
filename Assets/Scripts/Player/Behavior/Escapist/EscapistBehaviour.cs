@@ -44,7 +44,7 @@ namespace Player.Behaviour.Escapist
             isKilled = true;
         }
 
-        [Command]
+        [Command(requiresAuthority = false)]
         public void CmdDestroy()
         {
             NetworkServer.Destroy(gameObject);
@@ -221,17 +221,6 @@ namespace Player.Behaviour.Escapist
         public bool IsKilled()
         {
             return isKilled;
-        }
-        private void OnEnable()
-        {
-            if (isLocalPlayer)
-                escapistController.Escapist.Enable();
-        }
-
-        private void OnDisable()
-        {
-            if (isLocalPlayer)
-                escapistController.Escapist.Disable();
         }
 
         protected override void OnDestroy()
