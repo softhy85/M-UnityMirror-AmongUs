@@ -147,6 +147,13 @@ namespace Player.Behaviour.Escapist
             }
         }
 
+        [Client]
+        protected override void MoveTowardTarget(Vector3 targetPosition, float actualSpeed)
+        {
+            base.MoveTowardTarget(targetPosition, actualSpeed);
+            if (!isLocalPlayer) return;
+            audioManager.StartSound(SoundType.SlimeJump);
+        }
         #endregion
 
         #region ClientRpc
@@ -169,6 +176,7 @@ namespace Player.Behaviour.Escapist
                 SetSlimeSkin(color);
             }
         }
+
 
         #endregion
 

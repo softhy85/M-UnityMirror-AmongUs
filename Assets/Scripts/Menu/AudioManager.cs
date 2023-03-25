@@ -1,9 +1,6 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using Player.Information;
 using UnityEngine;
 using UnityEngine.Audio;
+using Random = System.Random;
 
 namespace Menu
 {
@@ -11,10 +8,14 @@ namespace Menu
     {
         private AudioManager instance;
 
+        [SerializeField] private Music[] musics;
+
         [SerializeField] private Sound[] sounds;
 
         [SerializeField] private AudioMixerGroup  audioMixerGroup ;
+
         private MusicType actualMusic = MusicType.NoMusic;
+        private SoundType lastSound = SoundType.NoSound;
 
         public MusicType GetActualMusic()
         {
@@ -29,19 +30,27 @@ namespace Menu
                 return;
             }
 
-            foreach (var sound in sounds)
-            {
-                sound.audioSource = gameObject.AddComponent<AudioSource>();
-                sound.audioSource.clip = sound.clip;
-                sound.audioSource.playOnAwake = false;
-                sound.audioSource.loop = true;
-                sound.audioSource.pitch = sound.pitch;
-                sound.audioSource.outputAudioMixerGroup =
-                    audioMixerGroup;
-                sound.audioSource.volume = sound.volume;
-            }
+            InitializeMusic();
+            InitializeSound();
             instance = this;
             DontDestroyOnLoad(gameObject);
+        }
+
+        #region Music
+
+        private void InitializeMusic()
+        {
+            foreach (var music in musics)
+            {
+                music.audioSource = gameObject.AddComponent<AudioSource>();
+                music.audioSource.clip = music.clip;
+                music.audioSource.playOnAwake = false;
+                music.audioSource.loop = true;
+                music.audioSource.pitch = music.pitch;
+                music.audioSource.outputAudioMixerGroup =
+                    audioMixerGroup;
+                music.audioSource.volume = music.volume;
+            }
         }
 
         public void StartMusic(MusicType musicType)
@@ -50,11 +59,11 @@ namespace Menu
             {
                 StopMusic();
             }
-            foreach (var sound in sounds)
+            foreach (var music in musics)
             {
-                if (sound.musicType == musicType)
+                if (music.musicType == musicType)
                 {
-                    sound.audioSource.Play();
+                    music.audioSource.Play();
                     actualMusic = musicType;
                 }
             }
@@ -62,15 +71,47 @@ namespace Menu
 
         public void StopMusic()
         {
-
-            foreach (var sound in sounds)
+            foreach (var music in musics)
             {
-                if (sound.musicType == actualMusic)
+                if (music.musicType == actualMusic)
                 {
-                    sound.audioSource.Stop();
+                    music.audioSource.Stop();
                     actualMusic = MusicType.NoMusic;
                 }
             }
         }
+
+        #endregion
+
+        #region Sound
+
+        private void InitializeSound()
+        {
+            foreach (var sound in sounds)
+            {
+                sound.audioSource = gameObject.AddComponent<AudioSource>();
+                sound.audioSource.clip = sound.clip;
+                sound.audioSource.playOnAwake = false;
+                sound.audioSource.loop = false;
+                sound.audioSource.outputAudioMixerGroup =
+                    audioMixerGroup;
+                sound.audioSource.volume = sound.volume;
+            }
+        }
+        public void StartSound(SoundType soundType)
+        {
+            foreach (var sound in sounds)
+            {
+                if (sound.soundType == soundType && !sound.audioSource.isPlaying)
+                {
+                    sound.audioSource.pitch =
+                        UnityEngine.Random.Range(sound.pitchMin, sound.pitchMax);
+                    sound.audioSource.Play();
+                    lastSound = soundType;
+                }
+            }
+        }
+
+        #endregion
     }
 }

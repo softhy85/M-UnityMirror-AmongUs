@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 463214506341316029}
-  - component: {fileID: 463214506341316031}
+  - component: {fileID: 4450987015565769411}
   - component: {fileID: 463214506341316030}
   m_Layer: 0
   m_Name: AudioManager
@@ -33,7 +33,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!81 &463214506341316031
+--- !u!81 &4450987015565769411
 AudioListener:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -53,35 +53,60 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d16b811033bf40547979e83259e69e6e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sounds:
+  musics:
   - clip: {fileID: 8300000, guid: bb4b1d7596b57794aaa4e4650314155a, type: 3}
     musicType: 0
-    volume: 1
+    volume: 0.5
     pitch: 1
     audioSource: {fileID: 0}
   - clip: {fileID: 8300000, guid: 55d65c6de792b094db4835c1288420a7, type: 3}
     musicType: 1
-    volume: 1
+    volume: 0.5
     pitch: 1
     audioSource: {fileID: 0}
   - clip: {fileID: 8300000, guid: 202c9f83f11e5f84fae8f72ffbfb498d, type: 3}
     musicType: 2
-    volume: 1
+    volume: 0.15
     pitch: 1
     audioSource: {fileID: 0}
   - clip: {fileID: 8300000, guid: 73c112617fbe8dd40a226f7a3cfdaa4b, type: 3}
     musicType: 3
-    volume: 1
+    volume: 0.15
     pitch: 1
     audioSource: {fileID: 0}
   - clip: {fileID: 8300000, guid: 81614e6a3a436ec48837dc6e9351e2ff, type: 3}
     musicType: 4
-    volume: 1
+    volume: 0.15
     pitch: 1
     audioSource: {fileID: 0}
   - clip: {fileID: 8300000, guid: 4fa3ea84a14d24d489e590b7b8217399, type: 3}
     musicType: 5
-    volume: 1
+    volume: 0.15
     pitch: 1
+    audioSource: {fileID: 0}
+  sounds:
+  - clip: {fileID: 8300000, guid: ebe0ab00f2bebd94893d7dabea599b9a, type: 3}
+    soundType: 0
+    volume: 1
+    pitchMin: 0
+    pitchMax: 1
+    audioSource: {fileID: 0}
+  - clip: {fileID: 8300000, guid: 76d3d4c2ee8adc3458ea2656250e4942, type: 3}
+    soundType: 1
+    volume: 1
+    pitchMin: 0
+    pitchMax: 1
+    audioSource: {fileID: 0}
+  - clip: {fileID: 8300000, guid: 26659a44a95a6d646b0ae384cace2598, type: 3}
+    soundType: 2
+    volume: 1
+    pitchMin: 0
+    pitchMax: 1
+    audioSource: {fileID: 0}
+  - clip: {fileID: 8300000, guid: 9113776dffe376345a3e406750bb700b, type: 3}
+    soundType: 3
+    volume: 1
+    pitchMin: 0
+    pitchMax: 1
     audioSource: {fileID: 0}
   audioMixerGroup: {fileID: 24300002, guid: 89974167760ca2e49bfada09b0979c2d, type: 2}

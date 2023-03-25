@@ -4,17 +4,15 @@ using UnityEngine;
 namespace Menu
 {
     [Serializable]
-    public class Sound
+    public class Music
     {
         public AudioClip clip;
-        public SoundType soundType;
+        public MusicType musicType;
 
         [Range(0f, 1f)]
         public float volume;
-        [Range(0f, 0.5f)]
-        public float pitchMin;
-        [Range(0.5f, 1f)]
-        public float pitchMax;
+        [Range(0f, 1f)]
+        public float pitch;
 
         [HideInInspector]
         public AudioSource audioSource;

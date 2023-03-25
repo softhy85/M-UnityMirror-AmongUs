@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Menu;
 using Mirror;
@@ -21,7 +22,7 @@ namespace Player.Behaviour
     public class APlayerBehaviour : NetworkBehaviour
     {
 
-        [SyncVar] protected PlayerRole actualRole = PlayerRole.Phantom;
+        [SyncVar] protected PlayerRole actualRole = PlayerRole.NoRole;
         [SyncVar] protected Vector3 cameraRelative;
 
         protected Vector2 inputVector = new Vector2(0, 0);
@@ -49,6 +50,41 @@ namespace Player.Behaviour
         protected virtual void OnDestroy()
         {
             DesactivateCamera();
+        }
+
+        [Server]
+
+        IEnumerator ReloadPlayers()
+        {
+            yield return new WaitForSeconds(1);
+            foreach(var (key, cliConn) in NetworkServer.connections)
+            {
+                if (cliConn.identity.TryGetComponent<APlayerBehaviour>(out var playerBehaviour))
+                {
+                    // playerBehaviour.CmdActivateCamera();
+                    var actRole = playerBehaviour.GetRole();
+                    switch (actRole)
+                    {
+                        case PlayerRole.Escapist:
+                            var escapistBehaviour =
+                                (EscapistBehaviour)playerBehaviour;
+                            escapistBehaviour.CmdReloadSlime();
+                            break;
+                        case PlayerRole.Phantom:
+                            var phantomBehaviour =
+                                (PhantomBehaviour)playerBehaviour;
+                            phantomBehaviour.CmdReloadPhantom();
+                            break;
+                        case PlayerRole.Monster:
+                            var monsterBehaviour =
+                                (MonsterBehaviour)playerBehaviour;
+                            monsterBehaviour.CmdReloadMonster();
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
         }
 
         #region Command
@@ -80,34 +116,7 @@ namespace Player.Behaviour
         private void CmdReloadPlayers()
         {
             reloaded = true;
-            foreach(var (key, cliConn) in NetworkServer.connections)
-            {
-                if (cliConn.identity.TryGetComponent<APlayerBehaviour>(out var playerBehaviour))
-                {
-                    // playerBehaviour.CmdActivateCamera();
-                    var actRole = playerBehaviour.GetRole();
-                    switch (actRole)
-                    {
-                        case PlayerRole.Escapist:
-                            var escapistBehaviour =
-                                (EscapistBehaviour)playerBehaviour;
-                            escapistBehaviour.CmdReloadSlime();
-                            break;
-                        case PlayerRole.Phantom:
-                            var phantomBehaviour =
-                                (PhantomBehaviour)playerBehaviour;
-                            phantomBehaviour.CmdReloadPhantom();
-                            break;
-                        case PlayerRole.Monster:
-                            var monsterBehaviour =
-                                (MonsterBehaviour)playerBehaviour;
-                            monsterBehaviour.CmdReloadMonster();
-                            break;
-                        default:
-                            break;
-                    }
-                }
-            }
+            StartCoroutine(ReloadPlayers());
         }
 
         #endregion
@@ -131,7 +140,7 @@ namespace Player.Behaviour
         }
 
         [Client]
-        private void MoveTowardTarget(Vector3 targetPosition, float actualSpeed)
+        protected virtual void MoveTowardTarget(Vector3 targetPosition, float actualSpeed)
         {
             if (bodies[actualBody].animator.enabled)
                 bodies[actualBody].animator.SetFloat("speed", actualSpeed);
