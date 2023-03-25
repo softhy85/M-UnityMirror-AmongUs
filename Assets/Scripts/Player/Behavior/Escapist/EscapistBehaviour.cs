@@ -194,6 +194,7 @@ namespace Player.Behaviour.Escapist
         public override void OnStartAuthority()
         {
             base.OnStartAuthority();
+            actualRole = PlayerRole.Escapist;
             if (isLocalPlayer || isClient)
             {
                 CmdSetRole(PlayerRole.Escapist);
@@ -209,6 +210,7 @@ namespace Player.Behaviour.Escapist
         {
             base.Update();
             if (!isLocalPlayer) return;
+            if (pauseMenu.IsOpen()) return;
             SetMusicMonster();
             if (inputVector.magnitude != 0)
                 AskToMove(inputVector);

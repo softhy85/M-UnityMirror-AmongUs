@@ -50,7 +50,6 @@ namespace Network {
         public override GameObject OnRoomServerCreateGamePlayer(
             NetworkConnectionToClient conn, GameObject roomPlayer)
         {
-            Debug.Log("OnRoomServerCreateGamePlayer");
             PlayerRole role = roomPlayer.GetComponent<RoomPlayer>().GetRole();
             GameObject player = null;
             for (int i = 0; i < playerPrefabs.Length; i++)

@@ -43,14 +43,10 @@ namespace Player.Behaviour
 
         protected AudioManager audioManager;
 
+        protected PauseMenu pauseMenu;
+
         #region Server
 
-
-        [Server]
-        protected virtual void OnDestroy()
-        {
-            DesactivateCamera();
-        }
 
         [Server]
 
@@ -61,7 +57,6 @@ namespace Player.Behaviour
             {
                 if (cliConn.identity.TryGetComponent<APlayerBehaviour>(out var playerBehaviour))
                 {
-                    // playerBehaviour.CmdActivateCamera();
                     var actRole = playerBehaviour.GetRole();
                     switch (actRole)
                     {
@@ -163,7 +158,7 @@ namespace Player.Behaviour
             if (isLocalPlayer) {
                 if (actCamera != null) {
                     actCamera.gameObject.SetActive(true);
-                    // cameraRelative = actCamera.transform.position;
+                    cameraRelative = actCamera.transform.position;
                 }
             }
         }
@@ -171,9 +166,11 @@ namespace Player.Behaviour
         [Client]
         private void DesactivateCamera()
         {
+            if (!isLocalPlayer) return;
             if (actCamera != null)
                 actCamera.gameObject.SetActive(false);
         }
+
 
         #endregion
 
@@ -208,11 +205,19 @@ namespace Player.Behaviour
         #region Other
 
 
+
         public override void OnStartAuthority()
         {
             base.OnStartAuthority();
             if (isLocalPlayer)
             {
+                var pauseMenusObj = GameObject.FindGameObjectsWithTag("PauseMenu");
+                if (pauseMenusObj.Length == 1)
+                {
+                    if (pauseMenusObj[0]
+                        .TryGetComponent<PauseMenu>(out var actPauseMenu))
+                        pauseMenu = actPauseMenu;
+                }
                 var audioManagers =
                     GameObject.FindGameObjectsWithTag("AudioManager");
                 if (audioManagers.Length == 1)
@@ -255,6 +260,18 @@ namespace Player.Behaviour
         public PlayerRole GetRole()
         {
             return actualRole;
+        }
+
+        public override void OnStopClient()
+        {
+            if (!isLocalPlayer) return;
+            audioManager.StopMusic();
+        }
+
+        protected virtual void OnDestroy()
+        {
+            if (!isLocalPlayer) return;
+            DesactivateCamera();
         }
 
         #endregion

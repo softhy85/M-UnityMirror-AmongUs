@@ -63,6 +63,7 @@ namespace Player.Behaviour.Escapist
         [Client]
         private void OnTriggerMove(InputAction.CallbackContext ctx)
         {
+            if (!isLocalPlayer) return;
             inputVector = ctx.ReadValue<Vector2>();
         }
 
@@ -93,13 +94,13 @@ namespace Player.Behaviour.Escapist
                 if (NetworkClient.connection.identity
                     .TryGetComponent<APlayerBehaviour>(out var playerBehaviour))
                 {
-                    if (playerBehaviour.GetRole() == PlayerRole.Monster)
+                    if (playerBehaviour.GetRole() != PlayerRole.Phantom)
                     {
                         return;
                     }
+                    actualBody = hat;
+                    SetPhantomSkin(color);
                 }
-                actualBody = hat;
-                SetPhantomSkin(color);
             }
         }
 
@@ -120,6 +121,7 @@ namespace Player.Behaviour.Escapist
         public override void OnStartAuthority()
         {
             base.OnStartAuthority();
+            actualRole = PlayerRole.Phantom;
             if (isLocalPlayer || isClient)
             {
                 CmdSetRole(PlayerRole.Phantom);
@@ -135,9 +137,10 @@ namespace Player.Behaviour.Escapist
         {
             if (bodies[actualBody].gameObject.activeSelf) {
                 base.Update();
+                if (!isLocalPlayer) return;
+                if (pauseMenu.IsOpen()) return;
                 if (audioManager.GetActualMusic() != MusicType.EscapistCalmMusic)
                     audioManager.StartMusic(MusicType.EscapistCalmMusic);
-                if (!isLocalPlayer) return;
                 if (inputVector.magnitude != 0)
                     AskToMove(inputVector);
                 else
@@ -146,21 +149,22 @@ namespace Player.Behaviour.Escapist
         }
         private void OnEnable()
         {
-            if (isLocalPlayer)
-                escapistController.Escapist.Enable();
+            if (!isLocalPlayer) return;
+            escapistController.Escapist.Enable();
         }
 
         private void OnDisable()
         {
-            if (isLocalPlayer)
-                escapistController.Escapist.Disable();
+            if (!isLocalPlayer) return;
+            escapistController.Escapist.Disable();
         }
 
         protected override void OnDestroy()
         {
             base.OnDestroy();
-            if (isLocalPlayer)
-                UnbindTriggers();
+            if (!isLocalPlayer) return;
+            escapistController.Escapist.Disable();
+            UnbindTriggers();
         }
 
         #endregion

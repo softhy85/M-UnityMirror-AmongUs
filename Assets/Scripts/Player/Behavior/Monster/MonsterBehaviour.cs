@@ -2,7 +2,6 @@
 using Mirror;
 using Player.Behaviour.Escapist;
 using Player.Information;
-using UDP;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -126,6 +125,7 @@ namespace Player.Behaviour.Monster
         [Client]
         private void OnTriggerMove(InputAction.CallbackContext ctx)
         {
+            if (!isLocalPlayer) return;
             inputVector = ctx.ReadValue<Vector2>();
         }
 
@@ -135,12 +135,14 @@ namespace Player.Behaviour.Monster
         [Client]
         private void OnTriggerSprintOn(InputAction.CallbackContext ctx)
         {
+            if (!isLocalPlayer) return;
             inputSprint = true;
         }
 
         [Client]
         private void OnTriggerSprintOff(InputAction.CallbackContext ctx)
         {
+            if (!isLocalPlayer) return;
             inputSprint = false;
         }
 
@@ -151,6 +153,7 @@ namespace Player.Behaviour.Monster
         [Client]
         private void OnTriggerAttack(InputAction.CallbackContext ctx)
         {
+            if (!isLocalPlayer) return;
             switch (ctx.action.name)
             {
                 case "Attack 0":
@@ -297,6 +300,7 @@ namespace Player.Behaviour.Monster
         public override void OnStartAuthority()
         {
             base.OnStartAuthority();
+            actualRole = PlayerRole.Monster;
             if (isLocalPlayer || isClient) {
                 CmdSetRole(PlayerRole.Monster);
                 if (playerInfos)
@@ -311,6 +315,7 @@ namespace Player.Behaviour.Monster
         {
             base.Update();
             if (!isLocalPlayer) return;
+            if (pauseMenu.IsOpen()) return;
             if (audioManager?.GetActualMusic() != MusicType.MonsterMusic)
                 audioManager.StartMusic(MusicType.MonsterMusic);
             if (timerAttack > 0)
@@ -331,23 +336,22 @@ namespace Player.Behaviour.Monster
 
         private void OnEnable()
         {
-            if (isLocalPlayer)
-            {
-                monsterController?.Monster.Enable();
-            }
+            if (!isLocalPlayer) return;
+            monsterController?.Monster.Enable();
         }
 
         private void OnDisable()
         {
-            if (isLocalPlayer)
-                monsterController?.Monster.Disable();
+            if (!isLocalPlayer) return;
+            monsterController?.Monster.Disable();
         }
 
         protected override void OnDestroy()
         {
             base.OnDestroy();
-            if (isLocalPlayer)
-                UnbindTriggers();
+            if (!isLocalPlayer) return;
+            monsterController?.Monster.Disable();
+            UnbindTriggers();
         }
 
         #endregion
