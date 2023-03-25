@@ -9,7 +9,14 @@ namespace UI
         [SerializeField] private GameObject monsterPanel;
         [SerializeField] private GameObject escapistPanel;
 
-        public void activateWinScreen(PlayerRole role)
+        [Command(requiresAuthority = false)]
+        public void CmdActivateWinScreen(PlayerRole role)
+        {
+            RpcActivateWinScreen(role);
+        }
+
+        [ClientRpc]
+        private void RpcActivateWinScreen(PlayerRole role)
         {
             if (role == PlayerRole.Escapist)
             {

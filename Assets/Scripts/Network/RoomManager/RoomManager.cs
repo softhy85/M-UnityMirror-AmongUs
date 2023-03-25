@@ -121,7 +121,7 @@ namespace Network {
             if (nbEscapist == 0 && nbNoRole == 0 && NetworkServer.connections.Count > 1 && winWindow)
             {
                 roleWin = PlayerRole.Monster;
-                winWindow.activateWinScreen(roleWin);
+                winWindow.CmdActivateWinScreen(roleWin);
                 renderWinTime = 10;
                 gameTimer.gameObject.SetActive(false);
             }
@@ -129,13 +129,16 @@ namespace Network {
 
         private void CheckIfEscapistWin()
         {
-            if (gameTimer.GetTimer() <= 0 && winWindow)
-            {
-                roleWin = PlayerRole.Escapist;
-                winWindow.activateWinScreen(roleWin);
-                renderWinTime = 10;
-                gameTimer.gameObject.SetActive(false);
+            if (gameTimer && winWindow) {
+                if (gameTimer.GetTimer() <= 0)
+                {
+                    roleWin = PlayerRole.Escapist;
+                    winWindow.CmdActivateWinScreen(roleWin);
+                    renderWinTime = 10;
+                    gameTimer.gameObject.SetActive(false);
+                }
             }
+
         }
 
         public override void Update()

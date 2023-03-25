@@ -109,7 +109,7 @@ namespace Menu
             var slimeType = new List<string>
                 { "normal slime", "bunny slime", "cat slime" };
             var slimeHat = new List<string>
-                { "none", "king", "viking", "metal helmet", "leaf", "sprout" };
+                { "none", "king", "metal helmet", "viking", "leaf", "sprout" };
             var actualSlimeType = playerInfos.GetSlimeType();
             var actualSlimeHat = playerInfos.GetSlimeHat();
             var actualSlimeColor = playerInfos.GetSlimeColor();
