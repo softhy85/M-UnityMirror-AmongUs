@@ -10,6 +10,10 @@ TagManager:
   - RoomListCanvas
   - PlayerInfos
   - RoomManager
+  - AudioManager
+  - PlayerEscapist
+  - PlayerPhantom
+  - PlayerMonster
   layers:
   - Default
   - TransparentFX

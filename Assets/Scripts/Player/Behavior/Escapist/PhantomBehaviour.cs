@@ -1,4 +1,5 @@
-﻿using Mirror;
+﻿using Menu;
+using Mirror;
 using Player.Information;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -133,6 +134,8 @@ namespace Player.Behaviour.Escapist
         protected override void Update()
         {
             base.Update();
+            if (audioManager.GetActualMusic() != MusicType.EscapistCalmMusic)
+                audioManager.StartMusic(MusicType.EscapistCalmMusic);
             if (!isLocalPlayer) return;
             if (inputVector.magnitude != 0)
                 AskToMove(inputVector);

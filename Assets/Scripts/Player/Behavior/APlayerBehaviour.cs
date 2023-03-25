@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Menu;
 using Mirror;
 using Player.Behaviour.Escapist;
 using Player.Behaviour.Monster;
@@ -39,6 +40,8 @@ namespace Player.Behaviour
         protected Color? defaultColor = null;
         protected PlayerInfos playerInfos;
 
+        protected AudioManager audioManager;
+
         #region Server
 
 
@@ -74,14 +77,14 @@ namespace Player.Behaviour
         }
 
         [Command]
-        protected void CmdReloadPlayers()
+        private void CmdReloadPlayers()
         {
             reloaded = true;
             foreach(var (key, cliConn) in NetworkServer.connections)
             {
                 if (cliConn.identity.TryGetComponent<APlayerBehaviour>(out var playerBehaviour))
                 {
-                    playerBehaviour.CmdActivateCamera();
+                    // playerBehaviour.CmdActivateCamera();
                     var actRole = playerBehaviour.GetRole();
                     switch (actRole)
                     {
@@ -201,6 +204,16 @@ namespace Player.Behaviour
             base.OnStartAuthority();
             if (isLocalPlayer)
             {
+                var audioManagers =
+                    GameObject.FindGameObjectsWithTag("AudioManager");
+                if (audioManagers.Length == 1)
+                {
+                    if (audioManagers[0]
+                        .TryGetComponent<AudioManager>(out var actAudioManager))
+                    {
+                        audioManager = actAudioManager;
+                    }
+                }
                 if (actCamera != null) {
                     actCamera.gameObject.SetActive(false);
                     cameraRelative = actCamera.transform.position;

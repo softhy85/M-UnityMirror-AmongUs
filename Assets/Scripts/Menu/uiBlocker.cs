@@ -2,31 +2,34 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class uiBlocker : MonoBehaviour
+namespace Menu
 {
-
-    private static uiBlocker instance;
-
-    void Start()
+    public class uiBlocker : MonoBehaviour
     {
-        instance = this;
-        Hide_Static();
-    }
 
-    void Update()
-    {
-        
-    }
+        private static uiBlocker instance;
 
-    public static void Show_Static()
-    {
-        instance.gameObject.SetActive(true);
-        instance.transform.SetAsLastSibling();
-    }
+        void Start()
+        {
+            instance = this;
+            Hide_Static();
+        }
 
-    public static void Hide_Static()
-    {
-        instance.gameObject.SetActive(false);
-    }
+        void Update()
+        {
 
+        }
+
+        public static void Show_Static()
+        {
+            instance.gameObject.SetActive(true);
+            instance.transform.SetAsLastSibling();
+        }
+
+        public static void Hide_Static()
+        {
+            instance.gameObject.SetActive(false);
+        }
+
+    }
 }

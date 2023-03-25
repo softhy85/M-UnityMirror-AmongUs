@@ -3646,7 +3646,7 @@ GameObject:
   - component: {fileID: 43255571703533110}
   m_Layer: 0
   m_Name: EscapistPlayer
-  m_TagString: Player
+  m_TagString: PlayerEscapist
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3794,9 +3794,6 @@ MonoBehaviour:
   rotateSpeed: 15
   actCamera: {fileID: 7735973357488474930}
   isKilled: 0
-  testSlime: 0
-  testHat: 0
-  testColor: {r: 0, g: 0, b: 0, a: 0}
 --- !u!1 &4970995684296169543
 GameObject:
   m_ObjectHideFlags: 0
@@ -4999,7 +4996,6 @@ GameObject:
   m_Component:
   - component: {fileID: 2656667476400593675}
   - component: {fileID: 7735973357488474930}
-  - component: {fileID: 3909423113875772459}
   - component: {fileID: 1757012728221661331}
   m_Layer: 0
   m_Name: Camera
@@ -5066,14 +5062,6 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
---- !u!81 &3909423113875772459
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6721992726037199491}
-  m_Enabled: 1
 --- !u!114 &1757012728221661331
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -1,4 +1,5 @@
-﻿using Mirror;
+﻿using Menu;
+using Mirror;
 using Player.Behaviour.Escapist;
 using Player.Information;
 using UDP;
@@ -169,6 +170,12 @@ namespace Player.Behaviour.Monster
         #endregion
 
         [Client]
+        public GameObject getActualBody()
+        {
+            return bodies[actualBody].gameObject;
+        }
+
+        [Client]
         protected override void AskToMove(Vector3 movementVector)
         {
             var targetVector = new Vector3(movementVector.x, 0,
@@ -288,6 +295,8 @@ namespace Player.Behaviour.Monster
         {
             base.Update();
             if (!isLocalPlayer) return;
+            if (audioManager?.GetActualMusic() != MusicType.MonsterMusic)
+                audioManager.StartMusic(MusicType.MonsterMusic);
             if (timerAttack > 0)
             {
                 timerAttack -= Time.deltaTime;
