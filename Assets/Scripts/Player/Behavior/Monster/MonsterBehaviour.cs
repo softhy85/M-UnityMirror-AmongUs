@@ -95,6 +95,7 @@ namespace Player.Behaviour.Monster
         [Client]
         private void BindTriggers()
         {
+            if (!isLocalPlayer) return;
             monsterController.Monster.Movement.performed += OnTriggerMove;
             monsterController.Monster.Movement.canceled += OnTriggerMove;
             monsterController.Monster.Sprint.performed += OnTriggerSprintOn;
@@ -108,6 +109,7 @@ namespace Player.Behaviour.Monster
         [Client]
         private void UnbindTriggers()
         {
+            if (!isLocalPlayer) return;
             monsterController.Monster.Movement.performed -= OnTriggerMove;
             monsterController.Monster.Movement.canceled -= OnTriggerMove;
             monsterController.Monster.Sprint.performed -= OnTriggerSprintOn;
