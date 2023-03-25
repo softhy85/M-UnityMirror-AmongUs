@@ -1,6 +1,4 @@
-﻿using System;
-using Mirror;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Audio;
 
 namespace Player.Information

@@ -1,7 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using TMPro;
 
 
@@ -26,13 +23,13 @@ public class CreateRoom : MonoBehaviour
         {
             return ValidateChar(addedChar);
         };
-        
+
 
     }
 
     void Update()
     {
-        
+
     }
 
     private char ValidateChar(char addedChar)

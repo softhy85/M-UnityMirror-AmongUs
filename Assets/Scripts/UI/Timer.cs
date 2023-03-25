@@ -1,30 +1,31 @@
-using System.Collections;
-using System.Collections.Generic;
 using Mirror;
 using TMPro;
 using UnityEngine;
 
-public class Timer : NetworkBehaviour
+namespace UI
 {
-    [SyncVar] private float timeLeft = 5 * 60;
-    private string timerPrompt = "Time Left : ";
-
-    [SerializeField] private TMP_Text timer;
-    private void Awake()
+    public class Timer : NetworkBehaviour
     {
-        timeLeft = 5 * 60;
-    }
+        [SyncVar] private float timeLeft = 5 * 60;
+        private string timerPrompt = "Time Left : ";
 
-    public float GetTimer()
-    {
-        return timeLeft;
-    }
+        [SerializeField] private TMP_Text timer;
+        private void Awake()
+        {
+            timeLeft = 5 * 60;
+        }
 
-    private void Update()
-    {
-        if (timeLeft > 0) {
-            timeLeft -= Time.deltaTime;
-            timer.text = timerPrompt + ((int)Mathf.Round(timeLeft)).ToString() + " sec";
+        public float GetTimer()
+        {
+            return timeLeft;
+        }
+
+        private void Update()
+        {
+            if (timeLeft > 0) {
+                timeLeft -= Time.deltaTime;
+                timer.text = timerPrompt + ((int)Mathf.Round(timeLeft)).ToString() + " sec";
+            }
         }
     }
 }

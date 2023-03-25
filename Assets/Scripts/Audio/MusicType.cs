@@ -1,4 +1,4 @@
-﻿namespace Menu
+﻿namespace Audio
 {
     public enum MusicType
     {
