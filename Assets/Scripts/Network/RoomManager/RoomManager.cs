@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Net;
 using JetBrains.Annotations;
 using Mirror;
@@ -14,10 +15,6 @@ namespace Network {
     public class RoomManager : NetworkRoomManager
     {
         private bool host = false;
-        [Header("Room")]
-        [SerializeField] private bool roomPrivate = false;
-        [SerializeField] private string roomName = "roomName";
-        [SerializeField] private string roomPassword = "";
 
         [Header("Game")]
         [SerializeField] private PlayerPrefab[] playerPrefabs;
@@ -54,27 +51,21 @@ namespace Network {
         {
             Debug.Log("OnRoomServerCreateGamePlayer");
             PlayerRole role = roomPlayer.GetComponent<RoomPlayer>().GetRole();
+            GameObject player = null;
             for (int i = 0; i < playerPrefabs.Length; i++)
             {
                 if (playerPrefabs[i].role == role)
                 {
                     Transform startPos = GetStartPosition();
-                    GameObject player = startPos != null
+                    player = startPos != null
                         ? Instantiate(playerPrefabs[i].prefab, startPos.position, startPos.rotation)
                         : Instantiate(playerPrefabs[i].prefab, Vector3.zero, Quaternion.identity);
                     player.name = $"{playerPrefabs[i].role.ToString()} [connId={conn.connectionId}]";
-                    return (player);
                 }
             }
-            foreach(var (key, cliConn) in NetworkServer.connections) {
-                if (cliConn.identity.TryGetComponent<APlayerBehaviour>(out var playerBehaviour))
-                {
-                    playerBehaviour.CmdActivateCamera();
-                }
-            }
-
-            return (null);
+            return (player);
         }
+
         private void PlayerKilled(NetworkConnectionToClient conn, EscapistBehaviour escapistBehaviour)
         {
             GameObject phantomObj = null;
@@ -92,9 +83,9 @@ namespace Network {
             {
                 NetworkServer.RemovePlayerForConnection(conn, conn.identity.gameObject);
                 NetworkServer.AddPlayerForConnection(conn, phantomObj);
-                if (conn.identity.TryGetComponent<APlayerBehaviour>(out var playerBehaviour))
+                if (conn.identity.TryGetComponent<PhantomBehaviour>(out var phantomBehaviour))
                 {
-                    playerBehaviour.CmdActivateCamera();
+                    phantomBehaviour.CmdActivateCamera();
                 }
                 escapistBehaviour.CmdDestroy();
             }

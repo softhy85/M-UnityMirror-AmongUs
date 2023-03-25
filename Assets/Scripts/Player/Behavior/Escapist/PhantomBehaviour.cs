@@ -7,17 +7,29 @@ namespace Player.Behaviour.Escapist
 {
     public class PhantomBehaviour : APlayerBehaviour
     {
-        protected EscapistController escapistController;
+        [SyncVar] private int phantomHat;
+        [SyncVar] private Color phantomColor = new Color(0, 0, 0, 0);
 
-        [Header("Test")]
-        public int testHat;
-        public Color testColor = new Color(0, 0, 0, 0);
+        private EscapistController escapistController;
+        private static readonly int Speed = Animator.StringToHash("speed");
 
         #region Server
 
         #region Command
 
+        [Command(requiresAuthority = false)]
+        public void CmdReloadPhantom()
+        {
+            RpcSetPhantomSkin(phantomHat, phantomColor);
+        }
 
+        [Command]
+        public void CmdSetPhantom(int newPhantomHat, Color newPhantomColor)
+        {
+            phantomHat = newPhantomHat;
+            phantomColor = newPhantomColor;
+            RpcSetPhantomSkin(phantomHat, phantomColor);
+        }
 
         #endregion
 
@@ -52,56 +64,69 @@ namespace Player.Behaviour.Escapist
         {
             inputVector = ctx.ReadValue<Vector2>();
         }
-        #endregion
-
-        #endregion
 
         [Client]
-        void SetPhantomSkinTest()
+        public void SetPhantomSkin(Color color)
         {
-            Color defaultColor = new Color(0, 0, 0, 0);
-            SetPhantomSkin(testHat, testColor == defaultColor ? null : testColor);
-        }
-
-        [Client]
-        public void SetPhantomSkin(int hat = 0, Color? color = null)
-        {
-            var temp = bodies[actualBody].gameObject.transform.position;
-            bodies[actualBody].gameObject.SetActive(false);
-            bodies[actualBody].material.color = defaultColor ??
-                                                bodies[actualBody].material
-                                                    .color;
-            if (bodies[actualBody].animator && bodies[actualBody].animator.enabled)
-                bodies[actualBody].animator.SetFloat("speed", 0);
-            bodies[actualBody].animator.enabled = false;
-            bodies[actualBody].networkAnimator.enabled = false;
-            actualBody = hat;
-            bodies[actualBody].gameObject.transform.position = temp;
 
             bodies[actualBody].animator.enabled = true;
             bodies[actualBody].networkAnimator.enabled = true;
             bodies[actualBody].gameObject.SetActive(true);
             defaultColor = bodies[actualBody].material.color;
-            bodies[actualBody].material.color = color ?? defaultColor ?? bodies[actualBody].material.color;
+            bodies[actualBody].material.color = color;
         }
+
+        #endregion
+
+        #endregion
 
         #endregion
 
         #region ClientRpc
 
+        [ClientRpc]
+        private void RpcSetPhantomSkin(int hat, Color color)
+        {
+            if (!bodies[actualBody].gameObject.activeSelf)
+            {
+                if (NetworkClient.connection.identity
+                    .TryGetComponent<APlayerBehaviour>(out var playerBehaviour))
+                {
+                    if (playerBehaviour.GetRole() == PlayerRole.Monster)
+                    {
+                        return;
+                    }
+                }
+                actualBody = hat;
+                SetPhantomSkin(color);
+            }
+        }
+
         #endregion
 
         #region Other
 
-        public override void Start()
+        private void Start()
         {
-            base.Start();
+            if (isLocalPlayer || isClient)
+            {
+                escapistController = new EscapistController();
+                escapistController.Escapist.Enable();
+                BindTriggers();
+            }
+        }
+
+        public override void OnStartAuthority()
+        {
+            base.OnStartAuthority();
             if (isLocalPlayer || isClient)
             {
                 CmdSetRole(PlayerRole.Phantom);
                 escapistController = new EscapistController();
                 escapistController.Escapist.Enable();
-                BindTriggers();
+                if (playerInfos) {
+                    CmdSetPhantom(playerInfos.GetSlimeHat(), playerInfos.GetSlimeColor());
+                }
             }
         }
 
@@ -109,8 +134,6 @@ namespace Player.Behaviour.Escapist
         {
             base.Update();
             if (!isLocalPlayer) return;
-            if (!bodies[actualBody].gameObject.activeSelf)
-                SetPhantomSkinTest();
             if (inputVector.magnitude != 0)
                 AskToMove(inputVector);
             else
@@ -128,8 +151,9 @@ namespace Player.Behaviour.Escapist
                 escapistController.Escapist.Disable();
         }
 
-        private void OnDestroy()
+        protected override void OnDestroy()
         {
+            base.OnDestroy();
             if (isLocalPlayer)
                 UnbindTriggers();
         }

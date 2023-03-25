@@ -273,7 +273,7 @@ public class FlexibleColorPicker : MonoBehaviour {
     /// <param name="i">Index of the picker image.</param>
     public void SetPointerFocus(int i) {
         if(i < 0 || i >= pickers.Length)
-            Debug.LogWarning("No picker image available of type " + (PickerType)i + 
+            Debug.LogWarning("No picker image available of type " + (PickerType)i +
                 ". Did you assign all the picker images in the editor?");
         else
             focusedPicker = pickers[i];
@@ -360,12 +360,12 @@ public class FlexibleColorPicker : MonoBehaviour {
     /*----------------------------------------------------------
     * --------------------- COLOR PICKING ----------------------
     * ----------------------------------------------------------
-    * 
-    * Get a new color that is the currently selected color but with 
-    * one or two values changed. This is the core functionality of 
+    *
+    * Get a new color that is the currently selected color but with
+    * one or two values changed. This is the core functionality of
     * the picking images and the entire color picker script.
     */
-    
+
     /// <summary>
     /// Shift the FCP color by a small amount
     /// </summary>
@@ -375,7 +375,7 @@ public class FlexibleColorPicker : MonoBehaviour {
         PickerType pt = (PickerType)type;
         float value = GetValue1D(pt) + delta;
         this.bufferedColor = PickColor1D(bufferedColor, pt, value);
-        
+
         UpdateMarkers();
         UpdateTextures();
 
@@ -383,7 +383,7 @@ public class FlexibleColorPicker : MonoBehaviour {
         UpdateHex();
         onColorChange.Invoke(bufferedColor.color);
     }
-    
+
     /// <summary>
     /// Shift hue of the FCP color in a looping fashion
     /// </summary>
@@ -391,7 +391,7 @@ public class FlexibleColorPicker : MonoBehaviour {
         PickerType pt = PickerType.H;
         float h = Mathf.Repeat(GetValue1D(pt) + delta, 6f) / 6f;
         this.bufferedColor = PickColor1D(bufferedColor, pt, h);
-        
+
         UpdateMarkers();
         UpdateTextures();
 
@@ -453,7 +453,7 @@ public class FlexibleColorPicker : MonoBehaviour {
         case PickerType.R: return color.PickR(value);
         case PickerType.G: return color.PickG(value);
         case PickerType.B: return color.PickB(value);
-        case PickerType.H: return color.PickH(value * HUE_LOOP); 
+        case PickerType.H: return color.PickH(value * HUE_LOOP);
         case PickerType.S: return color.PickS(value);
         case PickerType.V: return color.PickV(value);
         case PickerType.A: return color.PickA(value);
@@ -474,8 +474,8 @@ public class FlexibleColorPicker : MonoBehaviour {
     /*----------------------------------------------------------
     * -------------------- MARKER UPDATING ---------------------
     * ----------------------------------------------------------
-    * 
-    * Update positions of markers on each picking texture, 
+    *
+    * Update positions of markers on each picking texture,
     * indicating the currently selected values.
     */
 
@@ -564,12 +564,12 @@ public class FlexibleColorPicker : MonoBehaviour {
     /*----------------------------------------------------------
     * -------------------- VALUE RETRIEVAL ---------------------
     * ----------------------------------------------------------
-    * 
-    * Get individual values associated with a picker image from the 
+    *
+    * Get individual values associated with a picker image from the
     * currently selected color.
     * This is needed to properly update markers.
     */
-    
+
     private Vector2 GetValue(PickerType type) {
         switch(type) {
 
@@ -636,8 +636,8 @@ public class FlexibleColorPicker : MonoBehaviour {
     /*----------------------------------------------------------
     * -------------------- TEXTURE UPDATING --------------------
     * ----------------------------------------------------------
-    * 
-    * Update picker image textures that show gradients of colors 
+    *
+    * Update picker image textures that show gradients of colors
     * that the user can pick.
     */
 
@@ -745,9 +745,9 @@ public class FlexibleColorPicker : MonoBehaviour {
     /*----------------------------------------------------------
     * ------------------ HEX INPUT UPDATING --------------------
     * ----------------------------------------------------------
-    * 
+    *
     * Provides an input field for hexadecimal color values.
-    * The user can type new values, or use this field to copy 
+    * The user can type new values, or use this field to copy
     * values picked via the picker images.
     */
 
@@ -802,8 +802,8 @@ public class FlexibleColorPicker : MonoBehaviour {
     /*----------------------------------------------------------
     * ---------------------- MODE UPDATING ---------------------
     * ----------------------------------------------------------
-    * 
-    * Allows user to change the 'Main picking mode' which determines 
+    *
+    * Allows user to change the 'Main picking mode' which determines
     * the values shown on the main, 2D picking image.
     */
 
@@ -896,7 +896,7 @@ public class FlexibleColorPicker : MonoBehaviour {
 
     /// <summary>
     /// tries to parse given string input as hexadecimal color e.g.
-    /// "#FF00FF" or "223344" returns black if string failed to 
+    /// "#FF00FF" or "223344" returns black if string failed to
     /// parse.
     /// </summary>
     public static Color ParseHex(string input) {
@@ -905,7 +905,7 @@ public class FlexibleColorPicker : MonoBehaviour {
 
     /// <summary>
     /// tries to parse given string input as hexadecimal color e.g.
-    /// "#FF00FF" or "223344" returns default color if string failed to 
+    /// "#FF00FF" or "223344" returns default color if string failed to
     /// parse.
     /// </summary>
     public static Color ParseHex(string input, Color defaultColor) {
@@ -919,8 +919,8 @@ public class FlexibleColorPicker : MonoBehaviour {
 
     /// <summary>
     /// Get normalized position of the given pointer event relative to the given rect.
-    /// (e.g. return [0,1] for top left corner). This method correctly takes into 
-    /// account relative positions, canvas render mode and general transformations, 
+    /// (e.g. return [0,1] for top left corner). This method correctly takes into
+    /// account relative positions, canvas render mode and general transformations,
     /// including rotations and scale.
     /// </summary>
     /// <param name="canvas">parent canvas of the rect (and therefore the FCP)</param>
@@ -951,7 +951,7 @@ public class FlexibleColorPicker : MonoBehaviour {
     }
 
     /// <summary>
-    /// Get normalized position in the case of a screen space (overlay) 
+    /// Get normalized position in the case of a screen space (overlay)
     /// type canvas render mode
     /// </summary>
     private static Vector2 GetNormScreenSpace(RectTransform rect, BaseEventData e) {
@@ -963,7 +963,7 @@ public class FlexibleColorPicker : MonoBehaviour {
     }
 
     /// <summary>
-    /// Get normalized position in the case of a world space (or screen space camera) 
+    /// Get normalized position in the case of a world space (or screen space camera)
     /// type cavnvas render mode.
     /// </summary>
     private static Vector2 GetNormWorldSpace(Canvas canvas, RectTransform rect, BaseEventData e) {
@@ -999,9 +999,9 @@ public class FlexibleColorPicker : MonoBehaviour {
         float m = v - c;
         float x = c * (1f - Mathf.Abs(h % 2f - 1f)) + m;
         c += m;
-        
+
         int range = Mathf.FloorToInt(h % 6f);
-        
+
         switch(range) {
         case 0: return new Color(c, x, m);
         case 1: return new Color(x, c, m);
@@ -1061,8 +1061,8 @@ public class FlexibleColorPicker : MonoBehaviour {
 
     /// <summary>
     /// Encodes a color while buffering hue and saturation values.
-    /// This is necessary since these values are singular for some 
-    /// colors like unsaturated grays and would lead to undesirable 
+    /// This is necessary since these values are singular for some
+    /// colors like unsaturated grays and would lead to undesirable
     /// behaviour when moving sliders towards such colors.
     /// </summary>
     [Serializable]
@@ -1095,7 +1095,7 @@ public class FlexibleColorPicker : MonoBehaviour {
             this.bufferedSaturation = sat;
         }
 
-        public BufferedColor(Color color, BufferedColor source) : 
+        public BufferedColor(Color color, BufferedColor source) :
             this(color, source.bufferedHue, source.bufferedSaturation) {
             this.Set(color);
         }

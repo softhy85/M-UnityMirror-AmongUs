@@ -1,5 +1,7 @@
-﻿using Mirror;
+﻿using System.Collections.Generic;
+using Mirror;
 using Player.Information;
+using Player.Information.Structure;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -8,22 +10,39 @@ namespace Player.Behaviour.Escapist
     public class EscapistBehaviour : APlayerBehaviour
     {
         [SyncVar] public bool isKilled = false;
-        protected EscapistController escapistController;
+        [SyncVar] private int slimeType = 0;
+        [SyncVar] private int slimeHat = 0;
+        [SyncVar] private Color slimeColor = new Color(0, 0, 0, 0);
+        private EscapistController escapistController;
+        private static readonly int Speed = Animator.StringToHash("speed");
 
-        [Header("Test")]
-        public int testSlime;
-        public int testHat;
-        public Color testColor = new Color(0, 0, 0, 0);
 
         #region Server
 
         #region Command
 
+        [Command(requiresAuthority = false)]
+        public void CmdReloadSlime()
+        {
+            RpcSetSlimeSkin(slimeType, slimeHat, slimeColor);
+        }
+
+        [Command]
+        private void CmdSetSlime(int newSlimeType, int newSlimeHat, Color newSlimeColor)
+        {
+            slimeType = newSlimeType;
+            slimeHat = newSlimeHat;
+            slimeColor = newSlimeColor;
+            RpcSetSlimeSkin(slimeType, slimeHat, slimeColor);
+        }
+
+        [Command(requiresAuthority = false)]
         public void CmdKilled(GameObject killer)
         {
             isKilled = true;
         }
 
+        [Command]
         public void CmdDestroy()
         {
             NetworkServer.Destroy(gameObject);
@@ -67,69 +86,67 @@ namespace Player.Behaviour.Escapist
         #endregion
 
         [Client]
-        void SetSlimeSkinTest()
+        public void SetSlimeSkin(Color color)
         {
-            Color blankColor = new Color(0, 0, 0, 0);
-            SetSlimeSkin(testSlime, testHat, testColor == blankColor ? null : testColor);
-        }
-
-        [Client]
-        private void SetSlimeSkin(int slime, int hat = 0, Color? color = null)
-        {
-            int[] slimeType = new int[3] { 0, 6, 7 };
-
-            var temp = bodies[actualBody].gameObject.transform.position;
-            bodies[actualBody].gameObject.SetActive(false);
-            bodies[actualBody].material.color = defaultColor ??
-                                                bodies[actualBody].material
-                                                    .color;
-            if (bodies[actualBody].animator && bodies[actualBody].animator.enabled)
-                bodies[actualBody].animator.SetFloat("speed", 0);
-            bodies[actualBody].animator.enabled = false;
-            bodies[actualBody].networkAnimator.enabled = false;
-            if (slime == 1)
-            {
-                actualBody = slimeType[slime];
-            }
-            else if (slime is >= 0 and <= 2)
-            {
-                actualBody = slimeType[slime] + hat;
-            }
-            bodies[actualBody].gameObject.transform.position = temp;
-
             bodies[actualBody].animator.enabled = true;
             bodies[actualBody].networkAnimator.enabled = true;
             bodies[actualBody].gameObject.SetActive(true);
             defaultColor = bodies[actualBody].material.color;
-            bodies[actualBody].material.color = color ?? defaultColor ?? bodies[actualBody].material.color;
+            bodies[actualBody].material.color = color;
         }
 
         #endregion
 
         #region ClientRpc
 
+        [ClientRpc]
+        private void RpcSetSlimeSkin(int slime, int hat, Color color)
+        {
+            if (!bodies[actualBody].gameObject.activeSelf)
+            {
+                var slimeTypes = new List<int> { 0, 6, 7 };
+
+                if (slime == 1)
+                {
+                    actualBody = slimeTypes[slime];
+                }
+                else if (slime is >= 0 and <= 2)
+                {
+                    actualBody = slimeTypes[slime] + hat;
+                }
+                SetSlimeSkin(color);
+            }
+        }
 
         #endregion
 
         #region Other
 
-        public override void Start()
+        private void Start()
         {
-            base.Start();
             if (isLocalPlayer || isClient)
             {
-                CmdSetRole(PlayerRole.Escapist);
                 escapistController = new EscapistController();
                 escapistController.Escapist.Enable();
                 BindTriggers();
+            }
+        }
+        public override void OnStartAuthority()
+        {
+            base.OnStartAuthority();
+            if (isLocalPlayer || isClient)
+            {
+                CmdSetRole(PlayerRole.Escapist);
+                if (playerInfos)
+                {
+                    CmdSetSlime(playerInfos.GetSlimeType(), playerInfos.GetSlimeHat(), playerInfos.GetSlimeColor());
+                }
             }
         }
 
         protected override void Update()
         {
             base.Update();
-            if (!bodies[actualBody].gameObject.activeSelf)
-                SetSlimeSkinTest();
             if (!isLocalPlayer) return;
             if (inputVector.magnitude != 0)
                 AskToMove(inputVector);
@@ -153,8 +170,9 @@ namespace Player.Behaviour.Escapist
                 escapistController.Escapist.Disable();
         }
 
-        private void OnDestroy()
+        protected override void OnDestroy()
         {
+            base.OnDestroy();
             if (isLocalPlayer) {
                 UnbindTriggers();
                 bodies[actualBody].gameObject.SetActive(false);

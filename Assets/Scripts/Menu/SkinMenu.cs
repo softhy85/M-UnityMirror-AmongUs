@@ -119,7 +119,6 @@ public class SkinMenu : MonoBehaviour
             slimeHatDropdown.value = actualSlimeHat;
         }
         slimeColor.SetColor(actualSlimeColor);
-        slimeColor.ChangeMode(1);
     }
 
     private void InitializeMonster()
@@ -134,6 +133,5 @@ public class SkinMenu : MonoBehaviour
             monsterTypeDropdown.value = actualMonsterType;
         }
         monsterColor.SetColor(actualMonsterColor);
-        monsterColor.ChangeMode(1);
     }
 }

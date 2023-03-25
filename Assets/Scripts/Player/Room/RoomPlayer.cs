@@ -4,6 +4,7 @@ using System.Linq;
 using Mirror;
 using Player.Information;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using Button = UnityEngine.UI.Button;
 using Image = UnityEngine.UI.Image;
@@ -28,12 +29,12 @@ namespace Player.Room
 
         [Header("UI Host")]
         [SerializeField] private TMP_Text HostPlayer;
-        
+
         [Header("UI Local Player")]
         [SerializeField] private Button lButtonReady;
         [SerializeField] private TMP_Dropdown lRoleOption;
         [SerializeField] private TMP_Text lRoleSelected;
-        
+
         [Header("UI Other Player")]
         [SerializeField] private Image oReady;
         [SerializeField] private TMP_Text oRoleSelected;
@@ -59,7 +60,7 @@ namespace Player.Room
         }
 
         [Server]
-        public void SetRole(PlayerRole newRole)
+        private void SetRole(PlayerRole newRole)
         {
             if (!isReady)
                 role = newRole;
@@ -76,19 +77,17 @@ namespace Player.Room
         public void SetReady(bool newReady)
         {
             isReady = newReady;
-            if (lButtonReady != null)
-                if (lButtonReady.TryGetComponent<Image>(out var button) && button != null)
-                    button.color = newReady ? Color.green : Color.red;
-            readyToBegin = isReady;
-            CmdChangeReadyState(isReady);
+            // if (lButtonReady != null)
+            //     if (lButtonReady.TryGetComponent<Image>(out var button) && button != null)
+            //         button.color = newReady ? Color.green : Color.red;
             RpcReady(isReady);
         }
 
         [Server]
-        private bool checkOtherClientReady()
+        private bool CheckOtherClientReady()
         {
-            int nbMonster = 0;
-            int nbEscapist = 0;
+            var nbMonster = 0;
+            var nbEscapist = 0;
             if (NetworkServer.connections.Count == 1)
                 return false;
             foreach (var (key, conn) in NetworkServer.connections)
@@ -131,14 +130,16 @@ namespace Player.Room
         {
             if (isHost)
             {
-                if (checkOtherClientReady())
+                if (CheckOtherClientReady())
                     SetReady(newReady);
             } else {
                 SetReady(newReady);
             }
+            readyToBegin = isReady;
+            CmdChangeReadyState(isReady);
         }
 
-        [Command]
+        [Command(requiresAuthority = false)]
         public void CmdSetPseudo(string newPseudo)
         {
             if (pseudo != "")
@@ -158,7 +159,13 @@ namespace Player.Room
         public void ClientRoleSelected()
         {
             if (!isOwned) return;
-            CmdRole(Enum.GetValues(typeof(PlayerRole)).Cast<PlayerRole>().ToArray()[lRoleOption.value]);
+            var roleStr = lRoleOption.options[lRoleOption.value].text;
+            if (roleStr == PlayerRole.Escapist.ToString()) {
+                    CmdRole(PlayerRole.Escapist);
+            } else if (roleStr == PlayerRole.Monster.ToString())
+            {
+                CmdRole(PlayerRole.Monster);
+            }
         }
 
         [Client]
@@ -215,7 +222,7 @@ namespace Player.Room
 
         #region Other
 
-        public void Initiate()
+        private void Initiate()
         {
             var playersInfos = GameObject.FindGameObjectsWithTag("PlayerInfos");
             if (playersInfos.Length == 1)
@@ -233,10 +240,16 @@ namespace Player.Room
             parentPlayer.transform.SetParent(playerListCanvas.transform);
             if (isLocalPlayer) {
                 localPlayer.SetActive(true);
-                List<string> playerRoles = Enum.GetNames(typeof(PlayerRole)).ToList();
+                var playerRoles = new List<string>();
+                Enum.GetNames(typeof(PlayerRole)).ToList();
+                foreach (var newRole in Enum.GetNames(typeof(PlayerRole)).ToList())
+                {
+                    if (newRole != PlayerRole.Phantom.ToString())
+                        playerRoles.Add(newRole);
+                }
                 lRoleOption.ClearOptions();
                 lRoleOption.AddOptions(playerRoles);
-                lRoleOption.SetValueWithoutNotify(0);
+                lRoleOption.value = 0;
                 if (lButtonReady != null)
                     if (lButtonReady.TryGetComponent<Image>(out var button))
                         button.color = isReady ? Color.green : Color.red;
@@ -262,9 +275,9 @@ namespace Player.Room
                 var temp = GameObject.FindGameObjectsWithTag("RoomListCanvas");
                 if (temp.Length == 1)
                 {
+                    initialize = true;
                     playerListCanvas = temp[0];
                     Initiate();
-                    initialize = true;
                 }
             }
         }

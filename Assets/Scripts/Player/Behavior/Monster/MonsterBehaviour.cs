@@ -9,23 +9,23 @@ namespace Player.Behaviour.Monster
 {
     public class MonsterBehaviour : APlayerBehaviour
     {
-        [SerializeField] protected float sprintSpeed;
+        [SyncVar] private int monsterType = 0;
+        [SyncVar] private Color monsterColor = new Color(0, 0, 0, 0);
+        [SerializeField] private float sprintSpeed;
 
-        protected MonsterController monsterController;
-        protected bool[] inputAttack = new bool[3] { false, false, false };
-        protected bool inputSprint = false;
+        private MonsterController monsterController;
+        private bool[] inputAttack = new bool[3] { false, false, false };
+        private bool inputSprint = false;
 
-        protected bool isAttacking;
-        protected float timerAttack = 0;
-
-        [Header("Test")]
-        public int testMonster;
-        public Color testColor = new Color(0, 0, 0, 0);
+        private bool isAttacking;
+        private float timerAttack = 0;
+        private static readonly int Attacking = Animator.StringToHash("attacking");
+        private static readonly int Speed = Animator.StringToHash("speed");
 
         #region Server
 
         [Server]
-        private bool checkAttack()
+        private bool CheckAttack()
         {
             var attack = inputAttack[0] || inputAttack[1] ||
                          inputAttack[2];
@@ -41,39 +41,52 @@ namespace Player.Behaviour.Monster
 
         #region Command
 
+        [Command(requiresAuthority = false)]
+        public void CmdReloadMonster()
+        {
+            RpcSetMonsterSkin(monsterType, monsterColor);
+        }
+
         [Command]
-        public void CmdAttack(int attackType)
+        private void CmdSetMonster(int newMonsterType, Color newMonsterColor)
+        {
+            monsterType = newMonsterType;
+            monsterColor = newMonsterColor;
+            RpcSetMonsterSkin(monsterType, monsterColor);
+        }
+
+        [Command]
+        private void CmdAttack(int attackType)
         {
             RpcAttack(attackType);
         }
 
         [Command]
-        public void CmdStopAttacking()
+        private void CmdStopAttacking()
         {
             RpcStopAttacking();
         }
 
         [Command]
-        public void CmdAttackPlayer(GameObject player)
+        private void CmdAttackPlayer(GameObject player)
         {
-            if (isAttacking)
+            if (!isAttacking) return;
+            if (player.TryGetComponent<APlayerBehaviour>(
+                    out var playerBehaviour))
             {
-                if (player.TryGetComponent<APlayerBehaviour>(
-                        out var playerBehaviour))
+                if (playerBehaviour.GetRole() == PlayerRole.Escapist)
                 {
-                    if (playerBehaviour.GetRole() == PlayerRole.Escapist)
-                    {
-                        EscapistBehaviour escapistBehaviour = (EscapistBehaviour)playerBehaviour;
-                        escapistBehaviour.CmdKilled(gameObject);
-                    }
+                    EscapistBehaviour escapistBehaviour = (EscapistBehaviour)playerBehaviour;
+                    escapistBehaviour.CmdKilled(gameObject);
                 }
             }
         }
 
         #endregion
 
-        #region Client
+        #endregion
 
+        #region Client
 
         #region triggers
 
@@ -155,74 +168,29 @@ namespace Player.Behaviour.Monster
 
         #endregion
 
-        #endregion
-
-        #endregion
-
-        #region Client
-
         [Client]
         protected override void AskToMove(Vector3 movementVector)
         {
             var targetVector = new Vector3(movementVector.x, 0,
                 movementVector.y);
             var eulerMovementVector = Quaternion.Euler(0, actCamera.transform.eulerAngles.y, 0) * targetVector;
-            float speed = 0;
-            if (inputSprint)
-                speed = sprintSpeed;
-            else
-                speed = moveSpeed;
+            var speed = inputSprint ? sprintSpeed : moveSpeed;
             var actualVecSpeed = movementVector * speed;
             var actualSpeed = Mathf.Sqrt(actualVecSpeed.x * actualVecSpeed.x +
                                          actualVecSpeed.y * actualVecSpeed.y);
-            var targetPosition = bodies[actualBody].gameObject.transform.position + eulerMovementVector * speed * Time.deltaTime;
+            var targetPosition = bodies[actualBody].gameObject.transform.position + eulerMovementVector * (speed * Time.deltaTime);
 
             CmdMove(eulerMovementVector, targetPosition, actualSpeed);
         }
 
         [Client]
-        protected void AskToAttack()
+        private void AskToAttack()
         {
             for (int it = 0; it < 2; it++) {
                 if (inputAttack[it])
                     CmdAttack(it);
                 inputAttack[it] = false;
             }
-        }
-
-        [Client]
-        void SetMonsterSkinTest()
-        {
-            Color defaultColor = new Color(0, 0, 0, 0);
-            SetMonsterSkin(testMonster, testColor == defaultColor ? null : testColor);
-        }
-
-        [Client]
-        public void SetMonsterSkin(int monster, Color? color = null)
-        {
-            var temp = bodies[actualBody].gameObject.transform.position;
-            bodies[actualBody].gameObject.SetActive(false);
-            bodies[actualBody].material.color = defaultColor ??
-                                                bodies[actualBody].material
-                                                    .color;
-            if (bodies[actualBody].animator.enabled)
-                bodies[actualBody].animator.SetFloat("speed", 0);
-            bodies[actualBody].animator.enabled = false;
-            bodies[actualBody].networkAnimator.enabled = false;
-            if (monster == 0)
-            {
-                actualBody = monster;
-            }
-            else if (monster == 1)
-            {
-                actualBody = monster;
-            }
-            bodies[actualBody].gameObject.transform.position = temp;
-            bodies[actualBody].animator.enabled = true;
-            bodies[actualBody].networkAnimator.enabled = true;
-            bodies[actualBody].gameObject.SetActive(true);
-            defaultColor = bodies[actualBody].material.color;
-            bodies[actualBody].material.color = color ?? defaultColor ?? bodies[actualBody].material.color;
         }
 
         [Client]
@@ -240,32 +208,52 @@ namespace Player.Behaviour.Monster
                 }
             }
         }
+        [Client]
+        public void SetMonsterSkin(Color color)
+        {
+            bodies[actualBody].animator.enabled = true;
+            bodies[actualBody].networkAnimator.enabled = true;
+            bodies[actualBody].gameObject.SetActive(true);
+            defaultColor = bodies[actualBody].material.color;
+            bodies[actualBody].material.color = color;
+        }
 
         #endregion
 
         #region ClientRpc
 
         [ClientRpc]
-        protected void RpcAttack(int attackType)
+        private void RpcSetMonsterSkin(int monster, Color color)
+        {
+            if (!bodies[actualBody].gameObject.activeSelf)
+            {
+                actualBody = monster;
+                SetMonsterSkin(color);
+            }
+        }
+
+
+        [ClientRpc]
+        private void RpcAttack(int attackType)
         {
             timerAttack = 4;
             isAttacking = true;
             var attackName = "attack" + attackType.ToString();
             if (bodies[actualBody].animator.enabled) {
                 bodies[actualBody].animator
-                    .SetBool("attacking", isAttacking);
+                    .SetBool(Attacking, isAttacking);
                 bodies[actualBody].animator.SetTrigger(attackName);
             }
         }
 
         [ClientRpc]
-        protected void RpcStopAttacking()
+        private void RpcStopAttacking()
         {
             if (isLocalPlayer) {
                 isAttacking = false;
                 if (bodies[actualBody].animator.enabled)
                     bodies[actualBody].animator
-                        .SetBool("attacking", false);
+                        .SetBool(Attacking, false);
             }
         }
 
@@ -273,22 +261,32 @@ namespace Player.Behaviour.Monster
 
         #region Others
 
-        public override void Start()
+        private void Start()
         {
-            base.Start();
-            if (isLocalPlayer || isClient) {
-                CmdSetRole(PlayerRole.Monster);
+            if (isLocalPlayer || isClient)
+            {
                 monsterController = new MonsterController();
                 monsterController.Monster.Enable();
                 BindTriggers();
             }
         }
 
+        public override void OnStartAuthority()
+        {
+            base.OnStartAuthority();
+            if (isLocalPlayer || isClient) {
+                CmdSetRole(PlayerRole.Monster);
+                if (playerInfos)
+                {
+                    CmdSetMonster(playerInfos.GetMonsterType(),
+                        playerInfos.GetMonsterColor());
+                }
+            }
+        }
+
         protected override void Update()
         {
             base.Update();
-            if (!bodies[actualBody].gameObject.activeSelf)
-                SetMonsterSkinTest();
             if (!isLocalPlayer) return;
             if (timerAttack > 0)
             {
@@ -298,7 +296,7 @@ namespace Player.Behaviour.Monster
             }
 
             if (!bodies[actualBody].gameObject.activeSelf) return;
-            if (checkAttack())
+            if (CheckAttack())
                 AskToAttack();
             else if (inputVector.magnitude != 0)
                 AskToMove(inputVector);
@@ -309,17 +307,20 @@ namespace Player.Behaviour.Monster
         private void OnEnable()
         {
             if (isLocalPlayer)
-                monsterController.Monster.Enable();
+            {
+                monsterController?.Monster.Enable();
+            }
         }
 
         private void OnDisable()
         {
             if (isLocalPlayer)
-                monsterController.Monster.Disable();
+                monsterController?.Monster.Disable();
         }
 
-        private void OnDestroy()
+        protected override void OnDestroy()
         {
+            base.OnDestroy();
             if (isLocalPlayer)
                 UnbindTriggers();
         }

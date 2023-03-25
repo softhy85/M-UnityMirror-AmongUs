@@ -22,10 +22,13 @@ namespace Player
 
         #region Add/Remove Trigger
 
+        [Client]
         private void AddListener()
         {
             disconnectButton.onClick.AddListener(OnDisconnectButton);
         }
+
+        [Client]
         private void RemoveListener()
         {
             disconnectButton.onClick.RemoveAllListeners();
@@ -33,6 +36,7 @@ namespace Player
 
         #endregion
 
+        [Client]
         private void OnDisconnectButton()
         {
             if (isClientOnly)

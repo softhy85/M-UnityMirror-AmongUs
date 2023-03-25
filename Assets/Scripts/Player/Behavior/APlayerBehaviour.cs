@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using Mirror;
+using Player.Behaviour.Escapist;
+using Player.Behaviour.Monster;
 using Player.Information;
 using UnityEngine;
 
@@ -32,15 +34,16 @@ namespace Player.Behaviour
 
         [field: SerializeField] protected Camera actCamera;
 
+        protected bool reloaded = false;
 
         protected Color? defaultColor = null;
-
+        protected PlayerInfos playerInfos;
 
         #region Server
 
 
         [Server]
-        void OnDestroy()
+        protected virtual void OnDestroy()
         {
             DesactivateCamera();
         }
@@ -68,6 +71,40 @@ namespace Player.Behaviour
         public void CmdActivateCamera()
         {
             RpcActivateCamera();
+        }
+
+        [Command]
+        protected void CmdReloadPlayers()
+        {
+            reloaded = true;
+            foreach(var (key, cliConn) in NetworkServer.connections)
+            {
+                if (cliConn.identity.TryGetComponent<APlayerBehaviour>(out var playerBehaviour))
+                {
+                    playerBehaviour.CmdActivateCamera();
+                    var actRole = playerBehaviour.GetRole();
+                    switch (actRole)
+                    {
+                        case PlayerRole.Escapist:
+                            var escapistBehaviour =
+                                (EscapistBehaviour)playerBehaviour;
+                            escapistBehaviour.CmdReloadSlime();
+                            break;
+                        case PlayerRole.Phantom:
+                            var phantomBehaviour =
+                                (PhantomBehaviour)playerBehaviour;
+                            phantomBehaviour.CmdReloadPhantom();
+                            break;
+                        case PlayerRole.Monster:
+                            var monsterBehaviour =
+                                (MonsterBehaviour)playerBehaviour;
+                            monsterBehaviour.CmdReloadMonster();
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
         }
 
         #endregion
@@ -133,9 +170,6 @@ namespace Player.Behaviour
         [ClientRpc]
         protected void RpcMove(Vector3 movementVector, Vector3 targetVector, float actualSpeed)
         {
-            // Debug.Log("Test Moving");
-            // Debug.Log("targetVector - " + targetVector);
-            // Debug.Log("actualSpeed - " + actualSpeed);
             MoveTowardTarget(targetVector, actualSpeed);
             RotateTowardMovementVector(movementVector);
         }
@@ -150,7 +184,6 @@ namespace Player.Behaviour
         [ClientRpc]
         protected void RpcActivateCamera()
         {
-            Debug.Log("Camara - LocalPlayer - " + isLocalPlayer);
             if (isLocalPlayer) {
                 ActivateCamera();
             } else
@@ -162,20 +195,34 @@ namespace Player.Behaviour
 
         #region Other
 
-        public virtual void Start()
+
+        public override void OnStartAuthority()
         {
+            base.OnStartAuthority();
             if (isLocalPlayer)
             {
                 if (actCamera != null) {
                     actCamera.gameObject.SetActive(false);
                     cameraRelative = actCamera.transform.position;
                 }
+
+                var playerInfosObj =
+                    GameObject.FindGameObjectsWithTag("PlayerInfos");
+                if (playerInfosObj.Length == 1)
+                {
+                    if (playerInfosObj[0]
+                        .TryGetComponent<PlayerInfos>(out var actPlayerInfos))
+                        playerInfos = actPlayerInfos;
+                }
+
             }
         }
 
         protected virtual void Update()
         {
             if (!actCamera) return;
+            if (isLocalPlayer && !reloaded)
+                CmdReloadPlayers();
             if (isLocalPlayer && !actCamera.gameObject.activeSelf)
                 ActivateCamera();
             else if (!isLocalPlayer && actCamera.gameObject.activeSelf)
