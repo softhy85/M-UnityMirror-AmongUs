@@ -1,9 +1,6 @@
-﻿using System;
-using Mirror;
+﻿using Mirror;
 using Network;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Rendering;
 using UnityEngine.UI;
 
 namespace Menu

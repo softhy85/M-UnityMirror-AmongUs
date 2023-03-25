@@ -1,8 +1,7 @@
 using UnityEngine;
 using UnityEngine.Audio;
-using Random = System.Random;
 
-namespace Menu
+namespace Audio
 {
     public class AudioManager : MonoBehaviour
     {

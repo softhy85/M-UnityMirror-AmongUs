@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace Menu
+namespace Audio
 {
     [Serializable]
     public class Sound
