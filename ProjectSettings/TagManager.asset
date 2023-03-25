@@ -15,6 +15,8 @@ TagManager:
   - PlayerPhantom
   - PlayerMonster
   - PauseMenu
+  - Timer
+  - WinWindow
   layers:
   - Default
   - TransparentFX

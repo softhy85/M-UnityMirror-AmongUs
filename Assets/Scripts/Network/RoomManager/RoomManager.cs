@@ -11,6 +11,7 @@ using Player.Information;
 using Player.Information.Structure;
 using Player.Room;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace Network {
     public class RoomManager : NetworkRoomManager
@@ -19,6 +20,11 @@ namespace Network {
 
         [Header("Game")]
         [SerializeField] private PlayerPrefab[] playerPrefabs;
+
+        private Timer gameTimer;
+        private WinWindow winWindow;
+        private PlayerRole roleWin = PlayerRole.NoRole;
+        private float renderWinTime = 0;
 
         private string GetLocalIPv4()
         {
@@ -87,27 +93,101 @@ namespace Network {
             }
         }
 
+        private void CheckPlayerKilled()
+        {
+            int nbEscapist = 0;
+            int nbNoRole = 0;
+            foreach (var (key, conn) in NetworkServer.connections)
+            {
+                if (conn.identity.gameObject)
+                {
+                    if (conn.identity.gameObject
+                        .TryGetComponent<APlayerBehaviour>(
+                            out var playerBehaviour))
+                    {
+                        var playerRole = playerBehaviour.GetRole();
+                        if (playerRole ==
+                            PlayerRole.Escapist)
+                        {
+                            var escapistBehaviour =
+                                (EscapistBehaviour)playerBehaviour;
+                            if (escapistBehaviour.IsKilled())
+                                PlayerKilled(conn, escapistBehaviour);
+                            else
+                                nbEscapist += 1;
+                        } else if (playerRole == PlayerRole.NoRole)
+                            nbNoRole += 1;
+                    } else
+                        nbNoRole += 1;
+                }
+            }
+
+            if (nbEscapist == 0 && nbNoRole == 0 && NetworkServer.connections.Count > 1 && winWindow)
+            {
+                roleWin = PlayerRole.Monster;
+                winWindow.activateWinScreen(roleWin);
+                renderWinTime = 10;
+                gameTimer.gameObject.SetActive(false);
+            }
+        }
+
+        private void CheckIfEscapistWin()
+        {
+            if (gameTimer.GetTimer() <= 0 && winWindow)
+            {
+                roleWin = PlayerRole.Escapist;
+                winWindow.activateWinScreen(roleWin);
+                renderWinTime = 10;
+                gameTimer.gameObject.SetActive(false);
+            }
+        }
+
         public override void Update()
         {
             base.Update();
-            if (!Utils.IsSceneActive(RoomScene))
+            if (Utils.IsSceneActive(GameplayScene))
             {
-                foreach (var (key, conn) in NetworkServer.connections)
+                if (!gameTimer)
                 {
-                    if (conn.identity.gameObject)
+                    var gameTimersObj =
+                        GameObject.FindGameObjectsWithTag("Timer");
+                    if (gameTimersObj.Length == 1)
+                        if (gameTimersObj[0].TryGetComponent<Timer>(out var actGameTime))
+                            gameTimer = actGameTime;
+                }
+                if (!winWindow)
+                {
+                    var winWindowsObj =
+                        GameObject.FindGameObjectsWithTag("WinWindow");
+                    if (winWindowsObj.Length == 1)
+                        if (winWindowsObj[0].TryGetComponent<WinWindow>(out var actWinWindow))
+                            winWindow = actWinWindow;
+                }
+                if (roleWin == PlayerRole.NoRole) {
+
+                    CheckPlayerKilled();
+                    CheckIfEscapistWin();
+                }
+                else
+                {
+                    if (renderWinTime >= 0)
                     {
-                        if (conn.identity.gameObject
-                            .TryGetComponent<APlayerBehaviour>(
-                                out var playerBehaviour))
+                        renderWinTime -= Time.deltaTime;
+                    }
+                    else
+                    {
+                        foreach (var (key, conn) in NetworkServer.connections)
                         {
-                            if (playerBehaviour.GetRole() ==
-                                PlayerRole.Escapist)
+                            if (conn.identity.gameObject)
                             {
-                                var escapistBehaviour =
-                                    (EscapistBehaviour)playerBehaviour;
-                                if (escapistBehaviour.IsKilled())
+                                if (conn.identity.gameObject
+                                    .TryGetComponent<APlayerBehaviour>(
+                                        out var playerBehaviour))
                                 {
-                                    PlayerKilled(conn, escapistBehaviour);
+                                    if (playerBehaviour.IsHost()) {
+                                        playerBehaviour.CmdDisconnect();
+                                        return;
+                                    }
                                 }
                             }
                         }

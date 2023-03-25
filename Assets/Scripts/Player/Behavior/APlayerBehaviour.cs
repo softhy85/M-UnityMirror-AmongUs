@@ -114,6 +114,15 @@ namespace Player.Behaviour
             StartCoroutine(ReloadPlayers());
         }
 
+        [Command(requiresAuthority = false)]
+        public void CmdDisconnect()
+        {
+            if (isClientOnly)
+                NetworkManager.singleton.StopClient();
+            else
+                NetworkManager.singleton.StopHost();
+        }
+
         #endregion
 
         #endregion
@@ -171,6 +180,11 @@ namespace Player.Behaviour
                 actCamera.gameObject.SetActive(false);
         }
 
+        [Client]
+        public bool IsHost()
+        {
+            return isOwned;
+        }
 
         #endregion
 
